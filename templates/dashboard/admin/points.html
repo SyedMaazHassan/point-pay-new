@@ -1,0 +1,273 @@
+{% extends "dashboard/includes/base.html" %} 
+{% load static %} 
+{% block title %}
+{{ title }} {% endblock title %} {% block content %}
+
+
+
+
+<!-- Edit -->
+<div
+  class="modal fade"
+  id="editModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLongTitle">Edit point</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'dashboard:update_points' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+          <label for="validation" class="form-label"> Point Number </label>
+          <input type="hidden" name="edit_point_id" id="point_id_set">
+          <input
+            type="text"
+            class="form-control"
+            id="editPoint"
+            name="edit_point_name"
+            required
+          />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<!-- EndEdit -->
+
+<!-- Add -->
+<div
+  class="modal fade"
+  id="addModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLongTitle">Add point</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'dashboard:postPoint' %}" class="user" method= 'POST'>
+          {% csrf_token %}
+          <input
+            type="text"
+            class="form-control"
+            id="addPoint"
+            placeholder="Vehicle name"
+            name="description"
+            required
+          />
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div></form>
+    </div>
+  </div>
+</div>
+<!-- EndAdd -->
+
+<!-- Delete -->
+<div
+  id="deleteModal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body p-0">
+        <div class="card border-0 p-sm-3 p-2 justify-content-center">
+          <div class="card-header pb-0 bg-white border-0">
+            <div class="row">
+              <div class="col ml-auto">
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <p class="font-weight-bold mb-2">
+              Are you sure you wanna delete this ?
+            </p>
+            <p class="text-muted">This change will reflect in your portal.</p>
+          </div>
+
+          <form action="{% url 'dashboard:delete_point' %}" method="post">
+            {% csrf_token %}
+          <div class="card-body px-sm-4 mb-2 pt-1 pb-0">
+            <div class="row justify-content-end no-gutters">
+              <div class="col-auto">
+                <input type="hidden" name="point_id_delete" id="point_id_set_delete">
+                <button
+                  type="button"
+                  class="btn btn-light text-muted px-4 mr-2"
+                  data-dismiss="modal"
+                >
+                  Cancel
+                </button>
+              </div>
+              <div class="col-auto">
+                <button
+                  type="submit"
+                  class="btn btn-danger px-4"
+                >
+                Delete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- EndDelete -->
+
+<!-- Page Heading -->
+<div class="container-fluid" id="main-container">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800" style="font-size: 40px">
+      <b>{{ title }}</b>
+    </h1>
+    <button
+      class="btn btn-primary"
+      role="button"
+      data-toggle="modal"
+      data-target="#addModalCenter"
+    >
+      Add Points
+    </button>
+  </div>
+
+  
+  {% for message in messages %}
+
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert">
+      {{ message }}
+    </div>
+
+  {% endfor %}
+
+</div>
+<!-- Page Heading -->
+
+<!-- Points -->
+<div class="container-fluid">
+  <div class="row">
+    {% if not all_points %}
+      <div class="col-sm-12">
+        <div class="alert alert-warning" role="alert">
+          No point exists at this time.
+        </div>
+      </div>
+    {% endif %}
+
+    {% for point in all_points %}
+
+    <div class="col-sm-4 col-md-3 mb-3">
+      <div class="card border-primary">
+        <div class="card-body">
+          <p class="card-text text-dark">
+            <span class="material-icons float-left" style="vertical-align: -6px"
+              >directions_bus_filled
+            </span>
+            <span class="ml-3" id="point_{{ point.id }}"> {{ point.vehicle_name }} </span>
+            <span
+              class="material-icons float-right"
+              data-toggle="modal"
+              data-target="#deleteModal"
+              data-point-id="{{ point.id }}"
+              role="button"
+              style="color: red"
+              onclick="set_delete_point_value(this)"
+              >delete</span
+            >
+            <span
+              class="material-icons float-right mr-2"
+              role="button"
+              data-point-id="{{ point.id }}"
+              data-toggle="modal"
+              data-target="#editModalCenter"
+              style="color: green"
+              onclick="set_edit_point_value(this)"
+              >edit</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+    
+  </div>
+</div>
+
+
+<script>
+  function set_edit_point_value(edit_button_element) {
+     // Get values from card 
+      let point_id = $(edit_button_element).attr("data-point-id");
+      let point_name_id = "#point_" + point_id;
+      let vahicle_name = $(point_name_id).text();
+
+
+      // Set values in form
+      $("#point_id_set").val(point_id);
+      $("#editPoint").val(vahicle_name)
+  }
+
+  function set_delete_point_value(delete_button_element) {
+      // Get id  
+      let point_id = $(delete_button_element).attr("data-point-id");
+
+      // Set values in form
+      $("#point_id_set_delete").val(point_id);
+  }
+
+
+
+</script>
+
+
+{% endblock content %}

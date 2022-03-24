@@ -1,0 +1,121 @@
+{% extends "dashboard/includes/base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid" id="main-container">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800" style="font-size: 40px;"><b>{{ title }}</b></h1>
+    </div>
+
+    {% include "dashboard/includes/spinner.html" %}
+
+    <div id="data" style="display: none;">
+        <div v-if="head_section_spinner"  class="text-center">
+            <div class="spinner-border text-primary my-5" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>                
+        </div>
+
+        <div v-if="api_error" class="alert alert-danger text-center radius-100" role="alert">
+            ${ api_error }
+        </div>
+
+       
+
+        <div v-if="page_data">
+            <div class="row">
+                <div class="col-lg-8 col-md-12 col-xm-8 col-sm-12">
+                    <div class="row">
+                      
+
+                     
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-12 col-xm-4 col-sm-12">
+                    <div class="card mb-4 radius-10" >
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h5 class="m-0 font-weight-bold text-primary">Voucher QR code</h5>
+                            <div class="dropdown no-arrow">${ page_data.voucher.price }/=</div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div v-if="page_data.voucher">
+
+                                <div>
+                                    <div class="row text-center">
+                                        <div class="col-sm-12 d-flex align-items-center justify-content-center" style="height: 400px;">
+                                            <div>
+                                                <i class="material-icons custom-success-color" style="font-size: 55px;">check_circle</i>
+                                                <!-- <img src="{% static 'dashboard/img/my-new-qr.png' %}" class="mb-4 radius-100" style="width: 60%;" alt=""> -->
+                                                <h5 class="my-3">Fee paid successfully!</h5>                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <span v-if="page_data.voucher.is_expired" class="badge badge-danger my-voucher-badge">Expired</span>
+                                    <span v-else class="badge badge-success my-voucher-badge">Available</span>
+                                </div>
+
+
+                                <div class="text-center">
+                                    <h3 class="font-weight-bold mb-0">SCAN ME</h3>
+                                    <div class="px-4">
+                                        <img :src="page_data.voucher.qr_code" style="width: 100%;" alt="">
+                                    </div>
+                                    <h3 class="font-weight-bold">${ page_data.voucher.month }, ${ page_data.voucher.year }</h3>
+                                </div>
+
+                            </div>
+
+
+                            <div v-else>
+                                <div class="row text-center">
+                                    <div class="col-sm-12 d-flex align-items-center justify-content-center" style="height: 400px;">
+                                        <div>
+                                            <i class="material-icons text-warning" style="font-size: 55px;">cancel</i>
+                                            <!-- <img src="{% static 'dashboard/img/my-new-qr.png' %}" class="mb-4 radius-100" style="width: 60%;" alt=""> -->
+                                            <h5 class="my-3">Voucher not provided yet!</h5>                                
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+          
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script>
+    var url = {
+        dashboard_all_data: "{% url 'dashboard:get_dashboard_info' %}",
+    }
+</script>
+<script src="{% static 'dashboard/js/student/dashboard.js' %}"></script>
+
+
+{% endblock content %}

@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row mb-2 mt-4">
+    <div class="col-sm-8 d-flex align-items-center">
+        <h1 class="fw-extrabold mb-0">Create QR code</h1>
+    </div>
+
+    
+</div>
+
+<div class="row mt-4">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4 pb-4">
+        <div class="card border-0 shadow">
+            <div class="card-header d-flex flex-row align-items-center flex-0 border-bottom">
+                <div class="d-block">
+                    <div class="h6 fw-normal text-gray mb-2">QR code</div>
+                </div>
+                <div class="d-block ms-auto">
+                    <h2 class="h2 fw-extrabold">Rs {{ myuser.organization.point_fee }}</h2>
+                </div>
+
+            </div>
+
+            <div class="card-body p-2">
+                <div>
+                    <div class="p-4 py-0 text-center pt-4">
+                        <div class="card text-center">
+                            <div class="card-body p-3">
+                                <h4 class="card-title my-0">{{ timestamp }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                    <img style="width: 70%;" src="media/{{ myuser.organization.logo }}" class="my-4" alt="">
+                    </div>
+                    <div class="px-4">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <button type="submit" name="" id="" class="mb-4 btn w-100 btn-secondary btn-lg btn-block">
+                                Create now</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-sm-4"></div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

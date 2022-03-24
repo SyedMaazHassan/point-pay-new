@@ -1,0 +1,15 @@
+div.scrollmenu {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+div.scrollmenu .transaction-card {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 100px;
+  text-decoration: none;
+}
+
+/* div.scrollmenu .transaction-card:hover {
+  background-color: #777;
+} */

@@ -1,0 +1,203 @@
+{% extends "dashboard/includes/base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid" id="main-container">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800" style="font-size: 40px;"><b>{{ title }}</b></h1>
+    </div>
+
+    {% include "dashboard/includes/spinner.html" %}
+
+    <div id="data" style="display: none;">
+        <div v-if="head_section_spinner"  class="text-center">
+            <div class="spinner-border text-primary my-5" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>                
+        </div>
+
+        <div v-if="api_error" class="alert alert-danger text-center radius-100" role="alert">
+            ${ api_error }
+        </div>
+
+        <div v-if="page_data">
+
+            <!-- QR code modal -->
+            <div class="modal fade" id="qr-code-modal" tabindex="-1" role="dialog" aria-labelledby="qr-code-modal-label" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="qr-code-modalTitle">
+                                ${ page_data.is_to_create_qr.info.popup_title } 
+                                
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center" id="area-to-download">
+                            <!--Modal content-->
+                            <div 
+                                v-if="callAction_response" 
+                                class="alert radius-100 text-center mb-4"
+                                :class="[(callAction_response.status ? 'alert-20' : 'alert-40')]"
+                                role="alert">
+                                ${ callAction_response.message }
+                            </div>
+
+                            <div v-if="page_data.is_to_create_qr.status" class="text-center">
+                                <div class="text-center">
+                                    <img src="media/{{ user_info.organization.logo }}" style="width: 60%;" class="width-100" alt="">
+                                </div>
+                
+                                <div class="my-4">
+                                    <h5 class="mb-3">{{ user_info.organization.name }}</h5>
+                                    <h5><b>${ page_data.is_to_create_qr.info.month } ${ page_data.is_to_create_qr.info.year }</b> fee voucher of <b>${ page_data.is_to_create_qr.info.price }</b></h5>
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="text-center" id="area-to-download">
+
+                                    <h1 class="my-2 mb-0 text-center"><b>SCAN ME</b></h1>
+                                
+                                    <div class="text-center py-0">
+                                        <img :src="page_data.is_to_create_qr.info.qr_code" id="my-qr-code" style="width: 100%" alt="">
+                                    </div>
+
+                                    <div class="my-2">
+                                        <!-- <h5 class="mb-3">{{ user_info.organization.name }}</h5> -->
+                                        <h3><b>fee voucher ${ page_data.is_to_create_qr.info.price }/=</h3>
+                                        <h2 class="mt-2">
+                                            <b>
+                                                <span id="month-name">${ page_data.is_to_create_qr.info.month }</span>, 
+                                                <span id="year-name">${ page_data.is_to_create_qr.info.year }</span>
+                                            </b>
+                                        </h2>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button 
+                                v-on:click="callAction()"
+                                type="button" class="my-dashboard-button btn btn-primary d-flex align-items-center">
+                                    <div v-if="calling_action" class="spinner-border spinner-border-sm text-white" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <i v-else class="fas my-0" :class="[(page_data.is_to_create_qr.info.button.icon)]"  style="font-size: 14px;"></i>
+                                    <p class="my-0 ml-2">${ page_data.is_to_create_qr.info.button.text }</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div v-if="page_data.is_to_create_qr.status" class="row mb-4">
+                <div class="col-sm-12">
+                    <div class="my-card google-shadow radius-10">
+                        <div class="row px-2">
+                            <div class="col-sm-2 py-2 d-flex align-items-center">
+                                <img src="{% static 'dashboard/img/create-qr-code-icon.png' %}" class="width-100" alt="">
+                            </div>
+        
+                            <div class="col-sm-8 py-2 d-flex align-items-center">
+                                <div class="">
+                                    <h3 class="mb-2"><b>Hi {{ user.first_name }}!</b></h3>
+                                    <h4 class="mb-3">Create QR code for 
+                                        <span>${ page_data.is_to_create_qr.info.month } ${ page_data.is_to_create_qr.info.year }</span>
+                                    </h4>
+                                    <button 
+                                        data-toggle="modal"
+                                        data-target="#qr-code-modal"
+                                        type="button" class="my-dashboard-button btn btn-primary d-flex align-items-center">
+                                        <i class="fas my-0" :class="[(page_data.is_to_create_qr.info.button.icon)]" style="font-size: 14px;"></i>
+                                        <p class="my-0 ml-2">${ page_data.is_to_create_qr.info.button.text }</p>
+                                    </button>
+                                </div>
+                            </div>
+        
+                      
+                            <div class="col-sm-2 text-center py-2 d-flex align-items-center">
+                                <h2 class="mb-0"><b>${ page_data.is_to_create_qr.info.price }</b></h2>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+                
+            </div>
+        
+            <div v-else class="row mb-4">
+                <div class="col-sm-12">
+                    <div class="my-card google-shadow radius-10">
+                        <div class="row px-2">
+                            <div class="col-sm-2 py-2 d-flex align-items-center">
+                                <img src="{% static 'dashboard/img/qrcode.svg' %}" class="width-100" alt="">
+                            </div>
+        
+                            <div class="col-sm-8 py-2 d-flex align-items-center">
+                                <div class="">
+                                    <h3 class="mb-2"><b>Download</b></h3>
+                                    <h4 class="mb-3">
+                                        printable QR code for <span>${ page_data.is_to_create_qr.info.month } ${ page_data.is_to_create_qr.info.year }</span>
+                                        <a  
+                                            :href="'{{ base_url }}vouchers/' + page_data.is_to_create_qr.info.code" 
+                                            class="ml-2 mt-1 text-primary"
+                                            role="button" 
+                                            title="Open voucher details"
+                                            >
+                                            <span class="material-icons" style="font-size: 20px;">
+                                                launch
+                                            </span>
+                                        </a>
+                                    </h4>
+                                    <button 
+                                        data-toggle="modal"
+                                        data-target="#qr-code-modal"
+                                        type="button" class="my-dashboard-button btn btn-primary d-flex align-items-center">
+                                        <i class="fas my-0" :class="[(page_data.is_to_create_qr.info.button.icon)]" style="font-size: 14px;"></i>
+                                        <p class="my-0 ml-2">${ page_data.is_to_create_qr.info.button.text }</p>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 text-center py-2 d-flex align-items-center">
+                                <h2 class="mb-0"><b>${ page_data.is_to_create_qr.info.price }</b></h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    var url = {
+        dashboard_all_data: "{% url 'dashboard:get_dashboard_info' %}",
+        create_voucher: "{% url 'dashboard:create_voucher' %}"
+    }
+</script>
+<script src="{% static 'dashboard/js/admin/dashboard.js' %}"></script>
+
+
+{% endblock content %}

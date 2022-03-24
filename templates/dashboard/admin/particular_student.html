@@ -1,0 +1,315 @@
+{% extends "dashboard/includes/base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid" id="main-container">
+
+    <!-- Page Heading -->
+    <!-- <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800" style="font-size: 40px;"><b>{{ title }}</b></h1>
+    </div> -->
+
+    {% include "dashboard/includes/spinner.html" %}
+
+    <div id="data" style="display: none;">
+        
+        {% if student %}
+       
+        <div v-if="page_data">
+            <div class="row">
+                <div class="col-lg-8 col-md-12 col-xm-8 col-sm-12 py-3">
+                    <div class="my-card radius-10 google-shadow p-0 mb-4">
+                        <div class="fb-profile">
+                            <img class="fb-image-lg" src="https://www.gstatic.com/classroom/themes/img_reachout.jpg" alt="Profile image example"/>
+                            <div class="d-flex">
+                                <img class="fb-image-profile thumbnail" 
+                                src="media/{{ student.profile_picture }}" 
+                                style="border: solid 1px #cccccc;"
+                                alt="Profile image example"/>
+                                <div style="width: 80%;" class="pr-3 text-right">
+                                    <button type="button" class="btn btn-primary radius-100 px-3">Edit profile</button>
+                                </div>
+                            </div>
+                            <div class="" style="padding:30px;">
+                                <div class="fb-profile-text">
+                                    <h1 class="text-dark"><b>{{ student.user.first_name }} {{ student.user.last_name }}</b></h1>
+                                    <h4>{{ student.user.email }}</h4>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-4 pt-3">
+                                        <div class="my-card radius-10 bg-light-gray">
+                                            <h4 class="text-dark"><b>Member since</b></h4>
+                                            <h5>April 9, 2020</h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 pt-3">
+                                        <div class="my-card radius-10 bg-light-gray">
+                                            <h4 class="text-dark"><b>Amount paid</b></h4>
+                                            <h5>Rs. 6600</h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 pt-3">
+                                        <div class="my-card radius-10 bg-light-gray">
+                                            <h4 class="text-dark"><b>Last seen</b></h4>
+                                            <h5>2 days ago</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="card mb-4 radius-10 google-shadow" >
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h5 class="m-0 font-weight-bold text-dark">Sept. 2021</h5>
+                            <div class="dropdown no-arrow">
+
+                                
+                             
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+
+                                </div>
+
+
+                                <div class="col-sm-8">
+                                    <div class="radius-10 p-2 google-shadow" 
+                                        style="
+                                            overflow: hidden;
+                                            position: relative;
+                                            background-image: url({% static 'all/img/card-template.jpg' %});
+                                            background-color: #cccccc; 
+                                            width: 402.5px; 
+                                            height: 230px;">
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-9">
+ 
+                                                <div class="d-flex align-items-center">
+                                                    <img 
+                                                    src="media/{{ student.organization.logo }}" 
+                                                    style="width: 50px; height: 50px;" alt="">
+                                                    <div class="pl-2">
+                                                        <h5><b>{{ student.organization.abbr }} {{ student.organization.type }}</b></h5>
+                                                        <h6 class="mb-0 pb-0">CIS department</h6>
+                                                    </div>
+                                               
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-3">
+                                                <img 
+                                                src="media/{{ student.profile_picture }}" 
+                                                style="border-radius: 100%; width: 100%;"
+                                                alt="Profile image example"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-9">
+                                                <h2 style="font-size:40px ;font-family: Arial, Helvetica, sans-serif; color: #000000;">
+                                                    <b>Rs. 600</b>
+                                                </h2>
+                                            </div>
+
+
+                                            <div class="col-sm-3">
+                                                <h6 class="mt-3" style="color: #ffffff;">CS-18054</h6>
+                                            </div>
+                                            
+                                        </div>
+
+                                        <div style=" overflow: hidden;
+                                        position: relative; height: 100%;">
+                                            <div class="row" style="height: 50%;">
+                                                <div class="col-sm-4 d-flex align-items-center justify-content-between">
+                                                    Syed Maaz <br> Hassan
+                                                </div>
+                                                <div class="col-sm-2 d-flex align-items-center justify-content-between">
+                                                    
+                                                </div>
+
+                                                <div class="col-sm-3 text-right d-flex align-items-center justify-content-between"  style="color: white; font-size: 13px;">
+                                                    ISSUED <br>
+                                                    May 01/21
+                                                </div>
+
+                                                <div class="col-sm-3 text-right d-flex align-items-center justify-content-between" style="color: white; font-size: 13px;">
+                                                    ISSUED <br>
+                                                    May 30/21
+                                                </div>
+
+                                                
+
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-12 col-xm-4 col-sm-12  py-3">
+                    <div class="card mb-4 radius-10 google-shadow" >
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h5 class="m-0 font-weight-bold text-dark">ID card</h5>
+                            <div class="dropdown no-arrow">
+
+                                <div 
+                                    role="button" 
+                                    onclick="switchId()"  
+                                    >
+                                    <!-- <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i> -->
+                                    <span class="material-icons text-secondary" style="font-size: 21px;">
+                                        360
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                    aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Dropdown Header:</div>
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+
+                                                        
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="{% static 'dashboard/img/id-f.png' %}" class="width-100" alt="">
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <img src="{% static 'dashboard/img/id-b.png' %}" class="width-100" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                
+                                <!-- <div class="row text-center">
+                                    <div class="col-sm-12 d-flex align-items-center justify-content-center" style="height: 400px;">
+                                        <div>
+                                            <img src="{% static 'dashboard/img/select_profile.png' %}" class="mb-4" style="width: 60%;" alt="">
+                                            <h3>Select profile to <br> see overview</h3>                                
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4 radius-10 google-shadow" >
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h5 class="m-0 font-weight-bold text-dark">
+                                Send notification <br>
+                                <span class="h6">to this student</span>
+                            </h5>
+                            
+                            <div class="dropdown no-arrow">
+
+                                <div 
+                                    role="button" 
+                                    >
+                                    <!-- <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i> -->
+                                    <span class="material-icons text-secondary" style="font-size: 21px;">
+                                        notifications
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                    aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Dropdown Header:</div>
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+
+                            <form class="text-right">
+                                <div class="form-group text-left">
+                                    <input type="email" class="p-4 radius-100 form-control form-control-user" id="exampleInputEmail1" placeholder="Subject" aria-describedby="emailHelp">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <textarea class="p-3 form-control  radius-10" id="exampleInput" rows="4" placeholder="Type notification here..."></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary radius-100 px-3">Send now</button>
+                            </form>                            
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-8">
+                   
+                </div>
+            </div>
+            
+          
+        </div>
+
+        {% else %}
+
+            <div class="alert alert-danger radius-100 text-center" role="alert">
+                No student exists with this query
+            </div>
+
+        {% endif %}
+    </div>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script>
+    // var url = {
+    //     get_students: "{% url 'dashboard:get_students' %}",
+    // }
+    var button = false;
+    function switchId() {
+        if (!(button)) {
+            $(".flip-card-inner, .profile-card").css("transform", "rotateY(180deg)");
+        }else{
+            $(".flip-card-inner, .profile-card").css("transform", "rotateY(360deg)");
+        }
+        button = !(button);
+    }
+</script>
+<!-- <script src="{% static 'dashboard/js/admin/get_students.js' %}"></script> -->
+
+
+{% endblock content %}

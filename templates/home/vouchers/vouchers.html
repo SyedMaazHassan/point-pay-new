@@ -1,0 +1,222 @@
+{% extends "layouts/base.html" %}
+
+{% load static %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+{% if is_voucher_created and is_voucher_created == single_voucher %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Download voucher in PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" id="area-to-download">
+                <h1 class="text-center">Scan Me</h1>
+
+                <div class="d-flex  mt-4 align-items-center justify-content-center">
+                    <div class="bg-primary text-white py-2 px-3" style="width: fit-content; border-radius: 10px;">
+                        <h2 class="my-0 py-0">{{ single_voucher.showDate }} &nbsp; - &nbsp; Rs {{ single_voucher.price }}</h2>
+                    </div>
+                </div>
+
+                <img src="media/{{ single_voucher.qr_code_picture }}" alt="">
+
+                
+                <div class="d-flex align-items-center justify-content-center mx-5">
+                    <div class="bg-primary text-white py-2 px-3" style="border-radius: 10px; width: 100%;">
+                        <h2 class="my-0 py-0">{{ single_voucher.organization.abbr }}</h2>
+                    </div>
+                </div>
+
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    onclick="print_card('area-to-download', 'Voucher-{{ single_voucher.dateDict.month }}-{{ single_voucher.dateDict.year }}')">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endif %}
+
+<div class="row mb-2 mt-4">
+    <div class="col-sm-8 d-flex align-items-center">
+        <h1 class="fw-extrabold mb-0">Vouchers</h1>
+    </div>
+
+    <div class="col-sm-4 d-flex justify-content-end align-items-center">
+        {% if not is_voucher_created %}
+        <a href="{% url 'vouchers:create-voucher' %}">
+            <button style="height: fit-content;"
+                class="btn btn-gray-800 d-inline-flex align-items-center me-2 dropdown-toggle">
+                <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add New Vouchers
+            </button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-sm-8">
+        
+        <div class="row">
+            {% for voucher in all_vouchers %}
+            <div class="col-12 col-sm-6 col-xl-6 mb-4">
+                <div class="card border-0 shadow">
+                    <div class="card-body">
+                        <div class="row d-block d-xl-flex align-items-center">
+                            <div
+                                class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                <!-- <div class="icon-shape icon-shape-primary rounded me-4 me-sm-0"> -->
+                                <!-- <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z">
+                                            </path>
+                                        </svg> -->
+
+                                <!-- </div> -->
+                                <div class="p-2">
+                                    <a href="{% url 'vouchers:single_voucher' voucher.id %}">
+                                        <img src="media/{{ voucher.qr_code_picture }}" alt="">
+                                    </a>
+                                </div>
+                                <div class="d-sm-none">
+                                    <h2 class="h5">{{ voucher.showDate }}</h2>
+                                    <h3 class="fw-extrabold mb-1">Rs {{ voucher.price }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-7 px-xl-0">
+                                <div class="d-none d-sm-block">
+                                    <h2 class="h6 text-gray-400 mb-0">{{ voucher.showDate }}</h2>
+                                    <h3 class="fw-extrabold mb-1">Rs {{ voucher.price }}</h3>
+                                </div>
+                                <small class="d-flex align-items-center text-gray-500">
+                                    Created on &nbsp; <b>{{ voucher.created_at.date }}</b>
+
+                                </small>
+                                <div class="small d-flex mt-1">
+                                    <!-- <div>Since last month <svg class="icon icon-xs text-success" fill="currentColor"
+                                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="text-success fw-bolder">22%</span>
+                                        </div> -->
+                                    {% if voucher.is_expired %}
+                                    <span class="badge badge-pill badge-secondary bg-danger">Expired</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-secondary bg-success">Active</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+        </div>
+
+    </div>
+
+    <div class="col-sm-4 pb-4">
+        <div class="card border-0 shadow">
+            {% if single_voucher %}
+            <div class="card-header d-flex flex-row align-items-center flex-0 border-bottom">
+                <div class="d-block">
+                    <div class="h6 fw-normal text-gray mb-2">Voucher summary</div>
+                    {% if single_voucher.is_expired %}
+                    <span class="badge badge-pill badge-danger bg-danger mb-0">Expired</span>
+                    {% else %}
+                    <span class="badge badge-pill badge-secondary bg-success mb-0">Active</span>
+                    {% endif %}
+                </div>
+                <div class="d-block ms-auto">
+                    <h2 class="h2 fw-extrabold">Rs {{ single_voucher.price }}</h2>
+                </div>
+
+            </div>
+
+            <div class="card-body p-2">
+                <div>
+                    <div class="p-4 py-0 pt-4">
+                        <div class="card text-center">
+                            <div class="card-body p-3">
+                                <h4 class="card-title my-0">{{ single_voucher.dateDict.MONTH }},
+                                    {{ single_voucher.year }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    {% if not single_voucher.is_expired %}
+                    <div class="px-4 mt-4">
+                        <button 
+                            style="width: 100%;"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            class="btn btn-primary btn-lg d-flex align-items-center justify-content-center">
+                            <span class="material-icons mx-2">
+                                download
+                            </span>
+                            <span>Download PDF</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                    <img src="media/{{ single_voucher.qr_code_picture }}" alt="">
+
+                    <div class="px-4">
+                        <a href="{% url 'dashboard:transactions' single_voucher.id %}" type="button" name="" id="" class="mb-4 btn w-100 btn-secondary btn-lg btn-block">
+                            See details
+                        </a>
+                    </div>
+                
+
+                </div>
+            </div>
+            {% else %}
+            <div class="card-body p-2">
+                <div class="row" style="height: 630px;">
+                    <div class="col-sm-12 py-5 my-5 d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <img src="{% static 'notfound.png' %}" style="width: 150px; opacity: 0.6;" alt="">
+                            <div class="h4 fw-normal text-gray my-4" style="color: grey;">No voucher selected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(() => {
+        var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
+        let to_open_voucher = "{{ request.GET.open_voucher }}";
+        if (to_open_voucher == 'true') {
+            myModal.show();
+        }        
+    }, 100);
+
+</script>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

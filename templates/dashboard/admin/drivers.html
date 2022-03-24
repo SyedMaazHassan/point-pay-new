@@ -1,0 +1,307 @@
+{% extends "dashboard/includes/base.html" %} {% load static %} {% block title %}
+{{ title }} {% endblock title %} {% block content %}
+
+<!-- Edit -->
+<div
+  class="modal fade"
+  id="editModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLongTitle">Edit driver</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'dashboard:update_drivers' %}" method="POST">
+        {% csrf_token %}
+      <div class="modal-body">
+        <input type="hidden" name="edit_driver_id" id="driver_id_set"/>
+      <label class="">Driver's First Name </label>
+        <input
+          type="text"
+          class="form-control"
+          id="f_name"
+          name="fname"
+          required
+        />
+        <label class="">Driver's Last Name </label>
+        <input
+          type="text"
+          class="form-control"
+          id="l_name"
+          name="lname"
+          required
+        />
+        <label class="mt-3">Driver's Number </label>
+        <input
+          type="number"
+          class="form-control"
+          id="driverNum"
+          name="d_num"
+          required
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- EndEdit -->
+
+<!-- Add -->
+<div
+  class="modal fade"
+  id="addModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLongTitle">Add driver</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'dashboard:addDriver' %}" class="user" method= 'POST'>
+          {% csrf_token %}
+      <label class="">Driver's First Name </label>
+        <input
+          type="text"
+          class="form-control"
+          id="driverfname"
+          name="first_name"
+          required
+        />
+
+        <label class="">Driver's Last Name </label>
+        <input
+          type="text"
+          class="form-control"
+          id="driverlname"
+          name="last_name"
+          required
+        />
+        <label class="mt-3">Driver's Number </label>
+        <input
+          type="number"
+          class="form-control"
+          id="driverNum"
+          name="d_number"
+          required
+        />
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div> </form>
+    </div>
+  </div>
+</div>
+<!-- EndAdd -->
+
+<!-- Delete -->
+<div
+  id="deleteModal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-body p-0">
+        <div class="card border-0 p-sm-3 p-2 justify-content-center">
+          <div class="card-header pb-0 bg-white border-0">
+            <div class="row">
+              <div class="col ml-auto">
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <p class="font-weight-bold mb-2">
+              Are you sure you wanna delete this ?
+            </p>
+            <p class="text-muted">This change will reflect in your portal.</p>
+          </div>
+          <form action="{% url 'dashboard:delete_drivers' %}" method="post">
+            {% csrf_token %}
+          <div class="card-body px-sm-4 mb-2 pt-1 pb-0">
+            <div class="row justify-content-end no-gutters">
+              <div class="col-auto">
+                <input type="hidden" name="driver_id_delete" id="driver_id_set_delete">
+                <button
+                  type="button"
+                  class="btn btn-light text-muted"
+                  data-dismiss="modal"
+                >
+                  Cancel
+                </button>
+              </div>
+              <div class="col-auto">
+                <button
+                  type="submit"
+                  class="btn btn-danger px-4"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- EndDelete -->
+
+<!-- Page Heading -->
+<div class="container-fluid" id="main-container">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800" style="font-size: 40px">
+      <b>{{ title }}</b>
+    </h1>
+    <button
+      class="btn btn-primary"
+      role="button"
+      data-toggle="modal"
+      data-target="#addModalCenter"
+    >
+      Add Drivers
+    </button>
+  </div>
+</div>
+<!-- Page Heading -->
+
+<!-- Drivers -->
+<div class="container-fluid">
+  <div class="row">
+
+    {% for driver in all_drivers %}
+    
+
+    <div class="col-sm-4 mb-3">
+      <div class="card border-primary">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-3 d-flex align-items-center">
+              <img
+                src="{% static 'dashboard/img/my-new-qr.png' %}"
+                class="radius-100"
+                style="width: 100%"
+                alt=""
+              />
+            </div>
+
+            <div class="col-lg-6" style="margin: auto">
+              <h5 class="card-text font-weight-bold text-dark" >
+                <span id="driverf_{{driver.id}}">{{ driver.driver_fname }}</span> 
+                <span id="driverl_{{driver.id}}">{{ driver.driver_lname }}</span>
+              </h5>
+
+           
+              <p class="card-text" id="drivers_{{driver.id}}">
+                <span class="material-icons" style="vertical-align: -6px"
+                  >phone_in_talk</span
+                >
+                {{ driver.driver_num }}
+              </p>
+            </div>
+            <div class="col-sm-3">
+              <span
+                class="material-icons float-right"
+                data-toggle="modal"
+                data-target="#deleteModal"
+                data-driver-id="{{driver.id}}"
+                role="button"
+                style="color: red"
+                onclick="set_delete_driver_value(this)"
+                >delete</span
+              >
+              <span
+              class="material-icons float-right mr-2"
+              role="button"
+              data-driver-id="{{ driver.id }}"
+              data-toggle="modal"
+              data-target="#editModalCenter"
+              style="color: green"
+              onclick="set_edit_driver_value(this)"
+              >edit</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+<script>
+  function set_edit_driver_value(edit_button_element) {
+      
+     // Get values from card 
+      let driver_id = $(edit_button_element).attr("data-driver-id");
+      let driver_fname_id = "#driverf_" + driver_id;
+      let driver_fname = $(driver_fname_id).text();
+      let driver_lname_id = "#driverl_" + driver_id;
+      let driver_lname = $(driver_lname_id).text();
+
+      let driver_num_id = "#drivers_" + driver_id;
+      let driver_num = $(driver_num_id).text();
+      // Set values in form
+      $("#driver_id_set").val(driver_id);
+      $("#f_name").val(driver_fname);
+      $("#l_name").val(driver_lname);
+      $("#d_num").val(driver_num);
+  }
+
+  function set_delete_driver_value(delete_button_element) {
+      // Get id  
+      
+      let driver_id = $(delete_button_element).attr("data-driver-id");
+      console.log(driver_id);
+
+      // Set values in form
+      $("#driver_id_set_delete").val(driver_id);
+  } 
+
+
+</script>
+{% endblock content %}
