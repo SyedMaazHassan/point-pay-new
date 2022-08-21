@@ -12,7 +12,6 @@ import qrcode
 import datetime
 from io import StringIO  # for Python 3
 from django.shortcuts import get_object_or_404
-from django.core.validators import RegexValidator
 
 # Create your models here.
 
@@ -60,106 +59,43 @@ class Organization(models.Model):
         return f"{self.name} ({self.abbr}) {self.city}"
 
 
-class DataField(models.Model):
-    key = models.CharField(max_length=50)
-
-    def getFeildValue(self, user_info_object=None):
-        data = [1, 2, 3]
-        return (self.key, data)
-
-    def __str__(self):
-        return self.key
-
-
-class Page(models.Model):
-    title = models.CharField(max_length=50)
-    url_name = models.CharField(max_length=50, blank=True, null=True)
-    template = models.CharField(max_length=50)
-    icon = models.CharField(max_length=50, default="fas fa-fw fa-chart-area")
-    context = models.ManyToManyField(DataField, blank=True, null=True)
-    is_show_on_sidebar = models.BooleanField(default=True)
-    is_parameters_included = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.title} /{self.url_name}/ ({self.template})"
-
-    def getPageData(self, user_info_object, section_object_id=None):
-        data_to_return = {}
-        data_to_return["date"] = timezone.now()
-        data_to_return["title"] = self.title
-        data_to_return["side_bar_pages"] = user_info_object.status.pages.all().order_by(
-            "id"
-        )
-        data_to_return[
-            "base_url"
-        ] = f"{user_info_object.organization.abbr}/{user_info_object.status.name}/"
-        data_to_return["user_info"] = user_info_object
-
-        if self.url_name == "points":
-            all_points = Point.objects.filter(
-                organization=user_info_object.organization
-            )
-            data_to_return["all_points"] = all_points
-
-        if self.url_name == "drivers":
-            all_drivers = Driver.objects.filter(
-                organization=user_info_object.organization
-            )
-            data_to_return["all_drivers"] = all_drivers
-
-        if self.url_name == "vouchers" and section_object_id:
-            voucher = Voucher.objects.filter(
-                code=section_object_id, organization=user_info_object.organization
-            )
-            data_to_return["voucher"] = voucher[0] if voucher.exists() else None
-
-        if self.url_name == "students" and section_object_id:
-            data_to_return["student"] = None
-            if section_object_id.isnumeric():
-                student = UserInfo.objects.filter(
-                    id=section_object_id, organization=user_info_object.organization
-                )
-                if student.exists():
-                    data_to_return["student"] = student[0]
-
-        for field in self.context.all():
-            value = field.getFeildValue()
-            data_to_return[value[0]] = value[1]
-        return data_to_return
-
-
-class Status(models.Model):
-    name = models.CharField(max_length=255)
-    pages = models.ManyToManyField(Page)
-
-    def getPageByUrlName(self, url_name, is_parameters_included=None):
-        if is_parameters_included:
-            get_page_query = self.pages.filter(
-                url_name=url_name, is_parameters_included=True
-            )
-        else:
-            get_page_query = self.pages.filter(
-                url_name=url_name, is_parameters_included=False
-            )
-
-        if get_page_query.exists():
-            return get_page_query[0]
-
-        return None
-
-    def __str__(self):
-        return self.name
-
-
 class UserInfo(models.Model):
+    uid = models.CharField(
+        max_length=20,
+        unique=True,
+        null=True,
+        blank=True,
+        error_messages={"unique": "User with this UID number already exists."},
+    )
+    STATUS_CHOICES = [("student", "Student"), ("admin", "Admin"), ("driver", "Driver")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to="dp", null=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to="dp", default="dp/profile.jpg")
+    phone = models.CharField(
+        max_length=17,
+        unique=True,
+        null=True,
+        blank=True,
+        error_messages={"unique": "User with this phone number already exists."},
+    )
+    status = models.CharField(choices=STATUS_CHOICES, max_length=255)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     added_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        verbose_name = "User"
+
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.status} - {self.organization.abbr}"
+
+    def save(self, *args, **kwargs):
+        phone = self.phone
+        if phone:
+            phone = phone.replace("-", "")
+            phone = phone.replace("+", "")
+            if not (phone.isnumeric() and (9 < len(phone) < 17)):
+                raise Exception("Given phone number is not valid")
+
+        super(UserInfo, self).save(*args, **kwargs)
 
     def getJson(self):
         student_info = {

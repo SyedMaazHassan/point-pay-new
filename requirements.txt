@@ -1,7 +1,7 @@
 asgiref==3.4.1
 beautifulsoup4==4.10.0
 colorama==0.4.4
-Django==3.2.9
+Django==4.0
 django-bootstrap5==21.3
 djangorestframework==3.13.1
 Faker==13.3.1
@@ -13,3 +13,4 @@ qrcode==7.3.1
 six==1.16.0
 soupsieve==2.3.1
 sqlparse==0.4.2
+tzdata==2022.1

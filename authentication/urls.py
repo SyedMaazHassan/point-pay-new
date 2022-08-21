@@ -10,3 +10,5 @@ urlpatterns = [
     path("login-submit/", view=views.login_submit, name="login-submit"),
     path("logout/", view=views.logout, name="logout"),
 ]
+
+

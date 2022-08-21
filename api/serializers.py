@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from api.models import *
 from drivers.models import *
 from shuttles.models import *
-from dashboard.models import Organization
+from dashboard.models import Organization, UserInfo
 
 """
 This file contains serializers that is providing
@@ -45,8 +45,43 @@ class ShuttleSerializer(serializers.ModelSerializer):
 
 
 # ###########################################################
-# ###   FOR Mission Details API         START           #####
+# ###   FOR students Details API         START           #####
 # ###########################################################
+
+
+class BasicUserInfoSeriaizer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    user = BasicUserInfoSeriaizer(many=False)
+
+    # def get_user_details(self, instance):
+    #     return BasicUserInfoSeriaizer(instance.user, many=False).data
+
+    def validate(self, data):
+        errors = {}
+        uid = data.get("uid")
+
+        if not uid:
+            errors["uid"] = "UID is required to create the user"
+
+        if "phone" in data:
+            phone = data["phone"]
+            phone = phone.replace("-", "")
+            if not (phone.isnumeric() and (9 < len(phone) < 15)):
+                errors["phone"] = "Enter a valid phone number"
+
+        if len(errors.keys()) > 0:
+            raise serializers.ValidationError(errors)
+        return data
+
+    class Meta:
+        model = UserInfo
+        exclude = ["id"]
+
 
 # class CourseVeryShortSerializer(serializers.ModelSerializer):
 #     class Meta:
