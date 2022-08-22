@@ -11,8 +11,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # path("student", StudentApi.as_view()),
-    path("student/<uid>", StudentApi.as_view()),
+    path("student/<uid>", StudentApi.as_view(), name="student"),
+    path("student", StudentApi.as_view(), name="student"),
     path("", views.index, name="index"),
+
+    path("driver/login", DriverApi.as_view()),
+    path("driver/logout", DriverApi.as_view(), name="driver-shuttle"),
+    path("driver/shuttle", DriverShuttleApi.as_view(), name="driver-shuttle"),    
+    path("organization", OrganizationApi.as_view(), name="organization")
+
     # GET API
     # path("", views.index, name="index"),
     # path("driver/shuttles", DriverApi.as_view()),

@@ -22,7 +22,7 @@ and validate them properly
 
 
 # ###########################################################
-# ###   FOR getting shuttles by driver API  - END       #####
+# ###   FOR getting driver by driver API  - END       #####
 # ###########################################################
 
 
@@ -32,16 +32,36 @@ class DriverSerializer(serializers.ModelSerializer):
         exclude = ["pin", "organization", "id_number", "added_at"]
 
 
+# ###########################################################
+# ###   FOR getting driver session by driver API  - END       #####
+# ###########################################################
+
+
+class DriverSessionSerializer(serializers.ModelSerializer):
+    driver = DriverSerializer(many = False)
+    class Meta:
+        model = DriverSession
+        exclude = ["id", "created_at"]
+
+
+# ###########################################################
+# ###   FOR getting organization by driver API  - END       #####
+# ###########################################################
+
+
 class OrgSerializerShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ["id", "name", "abbr", "logo"]
 
+# ###########################################################
+# ###   FOR getting shuttles by driver API  - END       #####
+# ###########################################################
 
 class ShuttleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shuttle
-        exclude = ["id", "organization", "created_at"]
+        exclude = ["id", "organization"]
 
 
 # ###########################################################

@@ -1,8 +1,10 @@
+from statistics import mode
 from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator
 from dashboard.models import Organization
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+import uuid
 
 # paste in your models.py
 def only_int(value):
@@ -54,3 +56,11 @@ class Driver(models.Model):
 
     class Meta:
         ordering = ("id",)
+
+
+
+
+class DriverSession(models.Model):
+    session_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)

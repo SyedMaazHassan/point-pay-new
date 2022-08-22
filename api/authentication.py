@@ -1,4 +1,5 @@
 from api.models import *
+from drivers.models import DriverSession
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.response import Response
 from rest_framework import exceptions
@@ -61,15 +62,38 @@ class RequestAuthentication(BaseAuthentication, ApiResponse):
             message = str(e).replace("['", "").replace("']", "")
         return (status, {"uid": message})
 
+    def authenticateDriverSession(self, request):
+        status = False
+        message = None
+        if "session_id" not in request.headers:
+            message = "Session id is not provided in headers"
+            return (status, message)
+        try:
+            driver_session = DriverSession.objects.get(session_id=request.headers["session_id"])
+            status = True
+        except DriverSession.DoesNotExist:
+            message = "Driver session with given id does not exist, login required."
+        except Exception as e:
+            message = str(e).replace("['", "").replace("']", "")
+        return (status, {"driver": message})
+
     def authenticate(self, request):
         api_check = self.authenticateApiKey(request)
         if not api_check[0]:
             self.postError(api_check[1])
             raise exceptions.AuthenticationFailed(self.output_object)
 
-        requested_view = str(resolve(request.path_info)._func_path)
+        requested_view = resolve(request.path_info)._func_path
+        url_name = resolve(request.path_info).url_name
+    
 
-        if requested_view in self.user_auth_list:
+        if url_name == "driver-shuttle":
+            driver_session_check = self.authenticateDriverSession(request)
+            if not driver_session_check[0]:
+                self.postError(driver_session_check[1])
+                raise exceptions.AuthenticationFailed(self.output_object)
+
+        if url_name == "student":
             user_check = self.authenticateUid(request)
             if not user_check[0]:
                 self.postError(user_check[1])

@@ -14,6 +14,7 @@ class Shuttle(models.Model):
     shuttle_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     vehicle_number = models.CharField(validators=[MinLengthValidator(4)], max_length=10)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    is_running = models.BooleanField(default=False)
     added_at = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):

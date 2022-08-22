@@ -158,7 +158,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
 LOGIN_URL = "/authentication/login/"
-LOGIN_REDIRECT_URL = "/profiles/home"
+LOGIN_REDIRECT_URL = "/"
 
 
 MEDIA_URL = "/media/"
