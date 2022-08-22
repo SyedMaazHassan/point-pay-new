@@ -93,10 +93,10 @@ class RequestAuthentication(BaseAuthentication, ApiResponse):
                 self.postError(driver_session_check[1])
                 raise exceptions.AuthenticationFailed(self.output_object)
 
-        if url_name == "student":
-            user_check = self.authenticateUid(request)
-            if not user_check[0]:
-                self.postError(user_check[1])
-                raise exceptions.AuthenticationFailed(self.output_object)
+        # if url_name == "student":
+        #     user_check = self.authenticateUid(request)
+        #     if not user_check[0]:
+        #         self.postError(user_check[1])
+        #         raise exceptions.AuthenticationFailed(self.output_object)
 
         return (True, None)
