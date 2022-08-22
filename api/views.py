@@ -1,4 +1,5 @@
 from dashboard.models import *
+from dashboard.supporting_func import getUserByUid, isVoucherAlreadyCreated
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.response import Response
 from rest_framework import exceptions
@@ -290,4 +291,37 @@ class DriverApi(APIView, ApiResponse):
             self.postSuccess({}, "Driver logged out successfully!")
         except Exception as e:
             self.postError({"uid": str(e)})
+        return Response(self.output_object)
+
+
+
+
+
+
+
+
+
+
+
+# voucher api
+class VoucherApi(APIView, ApiResponse):
+    authentication_classes = [RequestAuthentication]
+
+    def __init__(self):
+        ApiResponse.__init__(self)
+
+    def get(self, request):
+        try:
+            uid = request.headers.get("uid")        
+            user = getUserByUid(uid)
+            voucher_created = isVoucherAlreadyCreated(user)
+            response = {
+                "voucher": {
+                    "is_available": voucher_created != None,
+                    "created_since": voucher_created.created_at if voucher_created else None
+                }
+            }
+            self.postSuccess(response, None)
+        except Exception as e:
+            self.postError({"voucher": str(e)})
         return Response(self.output_object)

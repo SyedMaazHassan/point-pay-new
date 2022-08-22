@@ -19,26 +19,21 @@ from datetime import datetime
 
 def getUser(user):
     user_info_query = UserInfo.objects.filter(user=user)
-    if user_info_query.exists():
-        user_info_object = user_info_query[0]
-        return user_info_object
-    return None
+    return user_info_query.first()
 
+def getUserByUid(uid):
+    user = UserInfo.objects.filter(uid = uid)
+    return user.first()
 
 def isVoucherAlreadyCreated(user):
     current_date = timezone.now()
     print(current_date.month, current_date.year)
-    check_voucher_query = Voucher.objects.filter(
+    current_voucher = Voucher.objects.filter(
         organization=user.organization,
         month=current_date.month,
         year=current_date.year
     ).order_by("-created_at")
-    print(check_voucher_query)
-    if check_voucher_query.exists():
-        # returning last recent voucher
-        return check_voucher_query[0]
-    else:
-        return False
+    return current_voucher.first()
 
 
 def isToCreateQR(user):

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from api.models import *
 from drivers.models import *
 from shuttles.models import *
-from dashboard.models import Organization, UserInfo
+from dashboard.models import Organization, UserInfo, Voucher
 
 """
 This file contains serializers that is providing
@@ -17,9 +17,13 @@ and validate them properly
 # Serializer for all the APIs related Script Model (table)
 
 # ###########################################################
-# ###   FOR getting shuttles by driver API  - START     #####
+# ###   FOR getting voucher by driver API  - START     #####
 # ###########################################################
 
+class VoucherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Voucher
+        exclude = ["id", "code", "added_by"]
 
 # ###########################################################
 # ###   FOR getting driver by driver API  - END       #####

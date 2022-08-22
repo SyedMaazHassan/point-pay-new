@@ -1,4 +1,5 @@
 from api.models import *
+from dashboard.models import UserInfo
 from drivers.models import DriverSession
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.response import Response
@@ -29,6 +30,9 @@ class ApiResponse:
 
 class RequestAuthentication(BaseAuthentication, ApiResponse):
     def __init__(self):
+        self.uid_auth_list = ["voucher", "student"]
+        self.session_auth_list = ["driver-shuttle"]
+
         self.user_auth_list = ["pool.views.UserApi"]
         ApiResponse.__init__(self)
 
@@ -51,13 +55,13 @@ class RequestAuthentication(BaseAuthentication, ApiResponse):
         status = False
         message = None
         if "uid" not in request.headers:
-            message = "User credentials not provided in headers"
+            message = "Student credentials not provided in headers"
             return (status, message)
         try:
-            user = SystemUser.objects.get(uid=request.headers["uid"])
+            user = UserInfo.objects.get(uid=request.headers["uid"])
             status = True
-        except SystemUser.DoesNotExist:
-            message = "User with given UID does not exist"
+        except UserInfo.DoesNotExist:
+            message = "Student with given UID does not exist"
         except Exception as e:
             message = str(e).replace("['", "").replace("']", "")
         return (status, {"uid": message})
@@ -83,20 +87,18 @@ class RequestAuthentication(BaseAuthentication, ApiResponse):
             self.postError(api_check[1])
             raise exceptions.AuthenticationFailed(self.output_object)
 
-        requested_view = resolve(request.path_info)._func_path
         url_name = resolve(request.path_info).url_name
     
-
-        if url_name == "driver-shuttle":
+        if url_name in self.session_auth_list:
             driver_session_check = self.authenticateDriverSession(request)
             if not driver_session_check[0]:
                 self.postError(driver_session_check[1])
                 raise exceptions.AuthenticationFailed(self.output_object)
 
-        # if url_name == "student":
-        #     user_check = self.authenticateUid(request)
-        #     if not user_check[0]:
-        #         self.postError(user_check[1])
-        #         raise exceptions.AuthenticationFailed(self.output_object)
+        if url_name in self.uid_auth_list:
+            user_check = self.authenticateUid(request)
+            if not user_check[0]:
+                self.postError(user_check[1])
+                raise exceptions.AuthenticationFailed(self.output_object)
 
         return (True, None)

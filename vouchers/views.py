@@ -70,3 +70,7 @@ def single_voucher(request, voucher_id):
         )
         return redirect("vouchers:all")
     return render(request, "home/vouchers/vouchers.html", context)
+
+
+
+

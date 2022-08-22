@@ -18,8 +18,11 @@ urlpatterns = [
     path("driver/login", DriverApi.as_view()),
     path("driver/logout", DriverApi.as_view(), name="driver-shuttle"),
     path("driver/shuttle", DriverShuttleApi.as_view(), name="driver-shuttle"),    
-    path("organization", OrganizationApi.as_view(), name="organization")
+    path("organization", OrganizationApi.as_view(), name="organization"),
 
+
+    # Voucher api
+    path("voucher/is_available", VoucherApi.as_view(), name="voucher"),
     # GET API
     # path("", views.index, name="index"),
     # path("driver/shuttles", DriverApi.as_view()),
