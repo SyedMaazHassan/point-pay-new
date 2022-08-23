@@ -23,10 +23,15 @@ and validate them properly
 class VoucherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Voucher
-        exclude = ["id", "code", "added_by"]
+        exclude = ["id", "code", "created_by", "qr_code_picture", "is_expired"]
 
 # ###########################################################
-# ###   FOR getting driver by driver API  - END       #####
+# ###   FOR getting voucher by driver API  - START     #####
+# ###########################################################
+
+
+# ###########################################################
+# ###   FOR getting driver by driver API  - START       #####
 # ###########################################################
 
 

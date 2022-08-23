@@ -11,7 +11,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # path("student", StudentApi.as_view()),
-    path("student/<uid>", StudentApi.as_view(), name="student"),
+    path("student/<uid>", StudentApi.as_view()),
     path("student", StudentApi.as_view(), name="student"),
     path("", views.index, name="index"),
 

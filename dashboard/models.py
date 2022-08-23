@@ -1,17 +1,10 @@
-from typing import ClassVar
-from django.db.models.deletion import CASCADE
-from django.http import request
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.aggregates import Max
-from django.db.models.fields.related import OneToOneField
 from django.utils import timezone
 from random import randint
 from itertools import chain
 import qrcode
 import datetime
-from io import StringIO  # for Python 3
-from django.shortcuts import get_object_or_404
 
 # Create your models here.
 

@@ -13,6 +13,7 @@ import copy
 import json
 from rest_framework.views import APIView
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -90,15 +91,15 @@ class StudentApi(APIView, ApiResponse):
             self.postError({"student": str(e)})
         return Response(self.output_object)
 
-    def delete(self, request, uid):
-        try:
-            student = UserInfo.objects.get(uid=uid)
-            student.user.delete()
-            student.delete()
-            self.postSuccess({}, "Student deleted successfully")
-        except Exception as e:
-            self.postError({"student": str(e)})
-        return Response(self.output_object)
+    # def delete(self, request, uid):
+    #     try:
+    #         student = UserInfo.objects.get(uid=uid)
+    #         student.user.delete()
+    #         student.delete()
+    #         self.postSuccess({}, "Student deleted successfully")
+    #     except Exception as e:
+    #         self.postError({"student": str(e)})
+    #     return Response(self.output_object)
 
     def patch(self, request, uid):
         try:

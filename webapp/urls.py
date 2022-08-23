@@ -30,6 +30,7 @@ urlpatterns = [
     path("shuttles/", include("shuttles.urls")),
     path("map/", include("map.urls")),
     path("api/", include("api.urls")),
+    path("api/", include("payment.urls")),
 ]
 
 urlpatterns = urlpatterns + static(

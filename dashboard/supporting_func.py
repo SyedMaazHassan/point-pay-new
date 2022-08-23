@@ -25,6 +25,24 @@ def getUserByUid(uid):
     user = UserInfo.objects.filter(uid = uid)
     return user.first()
 
+
+def getVoucherByCode(code, user):
+    if not code:
+        raise Exception("Voucher code is missing!")
+
+    if not user:
+        raise Exception("Accessor not provided")
+
+    voucher = Voucher.objects.filter(code = code).first()
+    if not voucher:
+        raise Exception("Invalid voucher")
+
+    if voucher.organization_id != user.organization_id:
+        raise Exception("You can pay vouchers of only your university")
+
+    return voucher
+    
+
 def isVoucherAlreadyCreated(user):
     current_date = timezone.now()
     print(current_date.month, current_date.year)

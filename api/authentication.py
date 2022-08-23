@@ -30,7 +30,7 @@ class ApiResponse:
 
 class RequestAuthentication(BaseAuthentication, ApiResponse):
     def __init__(self):
-        self.uid_auth_list = ["voucher", "student"]
+        self.uid_auth_list = ["voucher", "student", "payment"]
         self.session_auth_list = ["driver-shuttle"]
 
         self.user_auth_list = ["pool.views.UserApi"]

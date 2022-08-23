@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "map",
+    "payment",
     "authentication.apps.AuthenticationConfig",
     "api.apps.ApiConfig",
     "landing.apps.LandingConfig",
@@ -172,3 +173,6 @@ BOOTSTRAP5 = {
     "javascript_in_head": True,
     "layout": "floating",
 }
+
+
+PAYMENT_SESSION_EXPIRY_MIN = 4
