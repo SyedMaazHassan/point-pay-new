@@ -60,7 +60,7 @@ class UserInfo(models.Model):
         blank=True,
         error_messages={"unique": "User with this UID number already exists."},
     )
-    STATUS_CHOICES = [("student", "Student"), ("admin", "Admin"), ("driver", "Driver")]
+    STATUS_CHOICES = [("student", "Student"), ("admin", "Admin")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to="dp", default="dp/profile.jpg")
     phone = models.CharField(

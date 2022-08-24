@@ -16,6 +16,8 @@ from dashboard.models import Organization, UserInfo, Voucher
 from django.utils import timezone
 from datetime import datetime
 
+from payment.models import Account
+
 
 def getUser(user):
     user_info_query = UserInfo.objects.filter(user=user)
@@ -25,6 +27,20 @@ def getUserByUid(uid):
     user = UserInfo.objects.filter(uid = uid)
     return user.first()
 
+def getAccountByUser(user):
+    try:
+        return Account.objects.get(user = user)
+    except:
+        raise Exception("Student account not found")
+
+def getAccountByOrg(organization):
+    try:
+        return Account.objects.get(organization = organization)
+    except:
+        raise Exception("Organization account not found")
+
+# def getHostAccount():
+#     pass
 
 def getVoucherByCode(code, user):
     if not code:

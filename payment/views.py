@@ -1,5 +1,5 @@
 from dashboard.models import *
-from dashboard.supporting_func import getUserByUid, getVoucherByCode
+from dashboard.supporting_func import getUserByUid, getVoucherByCode, getAccountByOrg, getAccountByUser
 from payment.models import *
 from rest_framework.response import Response
 from api.serializers import *
@@ -30,7 +30,9 @@ class PaymentApi(APIView, ApiResponse):
         if request_confirmation_obj.is_expired():
             raise Exception("Payment session has been expired. Scan the QR code again.")
         if request_confirmation_obj.is_used:
-            raise Exception("Signature has been used and expired now")
+            raise Exception("Payment session has been expired. Scan the QR code again")
+        request_confirmation_obj.is_used = True
+        request_confirmation_obj.save()
         return request_confirmation_obj
 
     def validateVoucher(self, voucher, user):
@@ -89,14 +91,33 @@ class PaymentApi(APIView, ApiResponse):
 
     def post(self, request):
         try:
+            from django.conf import settings
+            point_pay_fee = settings.POINTPAY_FEE
             signature = request.data.get("signature")
             user = getUserByUid(request.headers.get("uid"))
             confirmation_obj = self.validateSignature(signature, user)
-            
-            fee_submission_obj = FeeSubmission.objects.create(
-                voucher = confirmation_obj.voucher,
-                user = confirmation_obj.user
-            )
+
+            user_account = getAccountByUser(user)
+            org_account = getAccountByOrg(user.organization)
+            # point_pay_account = getHostAccount()
+
+            with transaction.atomic():
+                voucher_fee = confirmation_obj.voucher.price
+                amount_to_debit = voucher_fee + point_pay_fee
+                # Debit from user account
+                transaction1 = user_account.debit(amount_to_debit, "PointPay-wallet", "Fee amount paid to the organization/Institute")
+                transaction2 = org_account.credit(voucher_fee, "PointPay-wallet", "Fee amount received from user/student")
+                # transaction3 = point_pay_account
+                
+                fee_submission_obj = FeeSubmission.objects.create(
+                    voucher = confirmation_obj.voucher,
+                    user = confirmation_obj.user
+                )
+
+                transaction1.fee_submission = fee_submission_obj
+                transaction1.save()
+                transaction2.fee_submission = fee_submission_obj
+                transaction2.save()
         
             response = {
                 "fee_submission": self.getSerializedCard(fee_submission_obj),
