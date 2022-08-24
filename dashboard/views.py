@@ -48,6 +48,35 @@ def transactions(request, voucher_id):
 
 @login_required
 def index(request):
+    import datetime
+    datetime.datetime(2022, 5, 5, 1, 1, 2)
+    print("abc")
+    from django.conf import settings
+    logo = os.path.join(settings.BASE_DIR, "static", "logo.jpg")
+    user_profile = os.path.join(settings.BASE_DIR, "static", "download.png")
+    organization_logo = cv2.imread(logo)
+    organization_abbr = 'NED UET'
+    department = 'CIS Department'
+    fee_price = 'Rs. 600'
+    user_full_name = 'Javeria Arif Khan'
+    roll_num = 'CS-18180'
+    user_profile_pic = cv2.imread(user_profile)
+    issue_date = 'March 6, 2022'
+    expiry_date = 'March 30/22'
+
+    new_card = id_card_generate(
+        organization_logo,
+        organization_abbr, 
+        department, 
+        fee_price,
+        user_full_name,
+        user_profile_pic,
+        roll_num,
+        issue_date,
+        expiry_date
+    )
+    print(new_card)
+
     user = getUser(request.user)
     my_datetime = timezone.now().strftime("%B, %Y")
     context = {"page": "dashboard", "total_students": 1500, "timestamp": my_datetime}

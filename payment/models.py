@@ -1,6 +1,3 @@
-from email.policy import default
-import imp
-from statistics import mode
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -36,6 +33,48 @@ class VoucherUser(models.Model):
 class FeeSubmission(VoucherUser):
     card = models.ImageField(upload_to = "cards", default="cards/test-card.jpg")
 
+    def get_formatted_date(self, date):
+        return date.strftime("%b %d, %Y")
+
+    def get_expiry_date(self, month, year):
+        last_date = 28 if month == 2 else 30
+        date_obj = datetime.datetime(year, month, last_date)
+        return date_obj.strftime("%b %d/%y")
+
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            import cv2
+            import os
+            from dashboard.supporting_func import id_card_generate
+            logo = os.path.join(settings.BASE_DIR, "media", str(self.voucher.organization.logo))
+            user_profile = os.path.join(settings.BASE_DIR, "media", str(self.user.profile_picture))
+            organization_logo = cv2.imread(logo)
+            organization_abbr = self.voucher.organization.abbr
+            department = 'CIS Department'
+            fee_price = f'{settings.CURRENCY_SYMBOL} {self.voucher.price}'
+            user_full_name = f'{self.user.user.first_name} {self.user.user.last_name}'
+            roll_num = 'CS-18180'
+            user_profile_pic = cv2.imread(user_profile)
+            issue_date = self.get_formatted_date(timezone.now())
+            expiry_date = self.get_expiry_date(self.voucher.month, self.voucher.year)
+
+            new_card = id_card_generate(
+                organization_logo,
+                organization_abbr, 
+                department, 
+                fee_price,
+                user_full_name,
+                user_profile_pic,
+                roll_num,
+                issue_date,
+                expiry_date
+            )
+
+            self.card.save(new_card['name'], new_card['content'], save=False)
+
+        super(FeeSubmission, self).save(*args, **kwargs)
+
 
 class Account(models.Model):
     account_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -48,18 +87,22 @@ class Account(models.Model):
         return f'{self.title} - {self.account_id}' 
 
     def is_enough_balance(self, required_amount):
-        current_balance = self.balance()
+        current_balance = self.balance_num()
         return current_balance >= required_amount
 
     def type(self):
         account_type = "Student" if self.user else "Organization"
         return f'{account_type} account'
 
-    def balance(self):
+    def balance_num(self):
         all_transaction_of_account = Transaction.objects.filter(account = self)
         agg_sum = all_transaction_of_account.aggregate(Sum("signed_amount"))
         agg_sum = agg_sum['signed_amount__sum'] if agg_sum['signed_amount__sum'] else 0
-        return f'{settings.CURRENCY_SYMBOL} {agg_sum}'
+        return agg_sum
+
+    def balance(self):
+        acc_balance = self.balance_num()
+        return f'{settings.CURRENCY_SYMBOL} {acc_balance}'
 
     def add_transaction(self, amount, source, note, is_credit = False, is_debit = False):
         if is_debit == is_credit:
