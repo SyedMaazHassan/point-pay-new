@@ -17,7 +17,7 @@ from dashboard.models import Organization, UserInfo, Voucher
 from django.utils import timezone
 from datetime import datetime
 from payment.models import Account
-import cv2
+# import cv2
 import os
 
 def id_card_generate(organization_logo, organization_abbr, department, fee_price,user_full_name,user_profile_pic,roll_num,issue_date,expiry_date): 
