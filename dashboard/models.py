@@ -95,6 +95,14 @@ class UserInfo(models.Model):
         num_part = roll_splited[1]
         if dept_part not in all_dept_abbrs:
             raise Exception("Given department is not included in your university")
+        if len(num_part) != 5:
+            raise Exception("Roll no. must be in correct format (CS-11001)")
+        current_timezone = timezone.now().year
+        year_part = int(num_part[:2])
+        number_part = int(num_part[2:])
+        # if year_part > 
+
+
         
 
     class Meta:
