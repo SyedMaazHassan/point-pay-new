@@ -1,5 +1,4 @@
 from django.http.response import JsonResponse
-from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from dashboard.supporting_func import *
@@ -10,8 +9,7 @@ from rest_framework.response import Response
 
 # from .serializers import PointSerializer, DriverSerializer
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
-from random import randint, choice
+from django.shortcuts import get_object_or_404, redirect, render
 
 
 

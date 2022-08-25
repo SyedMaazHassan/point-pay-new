@@ -13,7 +13,7 @@ import copy
 import json
 from rest_framework.views import APIView
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 # Create your views here.
 
@@ -46,6 +46,9 @@ class StudentApi(APIView, ApiResponse):
         # Step 2 - Create UserInfo Object with status = 'student'
         try:
             roll_no = data.get("roll_no")
+            if not roll_no:
+                raise Exception("Roll no. is required.")
+            profile_picture = data.get("profile_picture")
             student = UserInfo(
                 uid=uid,
                 user=user,
@@ -54,8 +57,8 @@ class StudentApi(APIView, ApiResponse):
                 organization_id=data.get("organization_id"),
                 phone=data.get("phone"),
             )
-            if data.get("profile_picture"):
-                student.profile_picture = data.get("profile_picture")
+            if profile_picture:
+                student.profile_picture = profile_picture
             student.save()
             return student
         except Exception as e:
