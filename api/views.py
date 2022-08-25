@@ -19,7 +19,7 @@ from django.shortcuts import get_object_or_404, render
 
 
 def index(request):
-    return render(request, "abcc.html")
+    return render(request, "dashboard/abc.html")
 
 
 class StudentApi(APIView, ApiResponse):

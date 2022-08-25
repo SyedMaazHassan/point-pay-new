@@ -36,7 +36,9 @@ class FeeSubmission(VoucherUser):
     def get_formatted_date(self, date):
         return date.strftime("%b %d, %Y")
 
-    def get_expiry_date(self, month, year):
+    def get_expiry_date(self):
+        month = self.voucher.month
+        year = self.voucher.year
         last_date = 28 if month == 2 else 30
         date_obj = datetime.datetime(year, month, last_date)
         return date_obj.strftime("%b %d/%y")
@@ -57,7 +59,7 @@ class FeeSubmission(VoucherUser):
             roll_num = 'CS-18180'
             user_profile_pic = cv2.imread(user_profile)
             issue_date = self.get_formatted_date(timezone.now())
-            expiry_date = self.get_expiry_date(self.voucher.month, self.voucher.year)
+            expiry_date = self.get_expiry_date()
 
             new_card = id_card_generate(
                 organization_logo,

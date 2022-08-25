@@ -14,6 +14,7 @@ import datetime
 # python manage.py runserver
 
 
+
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=15, default="organization")
@@ -53,6 +54,13 @@ class Organization(models.Model):
         return f"{self.name} ({self.abbr}) {self.city}"
 
 
+class Department(models.Model):
+    abbr = models.CharField(max_length=6, unique=True)
+    name = models.CharField(max_length=50)
+    added_at = models.DateTimeField(default=timezone.now)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+
+
 class UserInfo(models.Model):
     uid = models.CharField(
         max_length=20,
@@ -75,6 +83,27 @@ class UserInfo(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, max_length=255)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     added_at = models.DateTimeField(default=timezone.now)
+
+    def validate_roll_no(self):
+        if not self.roll_no:
+            raise Exception("Roll no. is required")
+        if "-" not in self.roll_no:
+            raise Exception("Roll no. must be in correct format (CS-11001)")        
+        all_dept_abbrs = Department.objects.filter(organization_id = self.organization_id).values_list("abbr", flat=True)
+        roll_splited = self.roll_no.split("-")
+        dept_part = roll_splited[0].upper()
+        num_part = roll_splited[1]
+        if dept_part not in all_dept_abbrs:
+            raise Exception("Given department is not included in your university")
+        if len(num_part) != 5:
+            raise Exception("Roll no. must be in correct format (CS-11001)")
+        current_timezone = timezone.now().year
+        year_part = int(num_part[:2])
+        number_part = int(num_part[2:])
+        # if year_part > 
+
+
+        
 
     class Meta:
         verbose_name = "User"
