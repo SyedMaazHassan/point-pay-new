@@ -13,6 +13,8 @@ from random import randint, choice
 # from rest_framework import generics, status, viewsets
 fake = Faker()
 # Create your views here.
+
+@login_required
 def transactions(request, voucher_id):
     user = getUser(request.user)
     voucher = Voucher.objects.filter(
