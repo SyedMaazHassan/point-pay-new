@@ -95,30 +95,29 @@
                         <th class="border-gray-200">Issue Date</th>
                         <th class="border-gray-200">Due Date</th>
                         <th class="border-gray-200">Total</th>
-                        <th class="border-gray-200">Status</th>
-                        <th class="border-gray-200">Action</th>
+                
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Item -->
-                    {% for student in students %}
+                    {% for fee_submission in fee_submissions %}
                     <tr>
                         <td>
                             <span class="fw-bold" data-bs-toggle="modal" data-bs-target="#cardModal">
-                                {{ student.id }}
+                                {{ fee_submission.id }}
                             </span>
                         </td>
                         <td>
-                            <span class="fw-normal">{{ student.name }}</span>
+                            <span class="fw-normal">{{ fee_submission.user.user.first_name }} {{ fee_submission.user.user.last_name }}</span>
                         </td>
                         <td>
-                            <span class="fw-normal">{{ student.roll_no }}</span>
+                            <span class="fw-normal">{{ fee_submission.user.roll_no }}</span>
                         </td>
                        
-                        <td><span class="fw-bold">{{ student.issue_date }} Mar 2022</span></td>
-                        <td><span class="fw-normal">{{ student.issue_date }} Apr 2022</span></td>
-                        <td><span class="fw-bold">Rs 600</span></td>
-                        <td><span class="fw-bold text-success">Completed</span></td>
+                        <td><span class="fw-bold">{{ fee_submission.voucher.created_at.date }}</span></td>
+                        <td><span class="fw-normal">{{ fee_submission.get_expiry_date }} </span></td>
+                        <td><span class="fw-bold">Rs.{{ fee_submission.voucher.price }}</span></td>
+                       
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
