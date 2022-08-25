@@ -1,3 +1,4 @@
+from statistics import mode
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -62,6 +63,7 @@ class UserInfo(models.Model):
     )
     STATUS_CHOICES = [("student", "Student"), ("admin", "Admin")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    roll_no = models.CharField(max_length=255, null=True, blank=True)
     profile_picture = models.ImageField(upload_to="dp", default="dp/profile.jpg")
     phone = models.CharField(
         max_length=17,

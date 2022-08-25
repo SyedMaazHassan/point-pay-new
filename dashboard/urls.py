@@ -9,7 +9,7 @@ from django.urls import path, include
 app_name = "dashboard"
 urlpatterns = [
     path("", view=views.index, name="index"),
-    path("<voucher_id>/transactions", view=views.transactions, name="transactions"),
+    # path("<voucher_id>/transactions", view=views.transactions, name="transactions"),
     # path("vouchers", view=views.vouchers, name="vouchers"),
     # path("<org_abbr>/<status>/",
     #      view=views.dashboard, name="dashboard"),

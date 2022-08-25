@@ -180,7 +180,7 @@
                     <img src="media/{{ single_voucher.qr_code_picture }}" alt="">
 
                     <div class="px-4">
-                        <a href="{% url 'dashboard:transactions' single_voucher.id %}" type="button" name="" id="" class="mb-4 btn w-100 btn-secondary btn-lg btn-block">
+                        <a href="{% url 'vouchers:transactions' single_voucher.id %}" type="button" name="" id="" class="mb-4 btn w-100 btn-secondary btn-lg btn-block">
                             See details
                         </a>
                     </div>

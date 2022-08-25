@@ -45,10 +45,12 @@ class StudentApi(APIView, ApiResponse):
         )
         # Step 2 - Create UserInfo Object with status = 'student'
         try:
+            roll_no = data.get("roll_no")
             student = UserInfo(
                 uid=uid,
                 user=user,
                 status="student",
+                roll_no=roll_no,
                 organization_id=data.get("organization_id"),
                 phone=data.get("phone"),
             )
