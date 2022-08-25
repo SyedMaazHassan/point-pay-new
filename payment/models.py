@@ -42,38 +42,38 @@ class FeeSubmission(VoucherUser):
         return date_obj.strftime("%b %d/%y")
 
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            import cv2
-            import os
-            from dashboard.supporting_func import id_card_generate
-            logo = os.path.join(settings.BASE_DIR, "media", str(self.voucher.organization.logo))
-            user_profile = os.path.join(settings.BASE_DIR, "media", str(self.user.profile_picture))
-            organization_logo = cv2.imread(logo)
-            organization_abbr = self.voucher.organization.abbr
-            department = 'CIS Department'
-            fee_price = f'{settings.CURRENCY_SYMBOL} {self.voucher.price}'
-            user_full_name = f'{self.user.user.first_name} {self.user.user.last_name}'
-            roll_num = 'CS-18180'
-            user_profile_pic = cv2.imread(user_profile)
-            issue_date = self.get_formatted_date(timezone.now())
-            expiry_date = self.get_expiry_date(self.voucher.month, self.voucher.year)
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:
+    #         # import cv2
+    #         import os
+    #         from dashboard.supporting_func import id_card_generate
+    #         logo = os.path.join(settings.BASE_DIR, "media", str(self.voucher.organization.logo))
+    #         user_profile = os.path.join(settings.BASE_DIR, "media", str(self.user.profile_picture))
+    #         organization_logo = cv2.imread(logo)
+    #         organization_abbr = self.voucher.organization.abbr
+    #         department = 'CIS Department'
+    #         fee_price = f'{settings.CURRENCY_SYMBOL} {self.voucher.price}'
+    #         user_full_name = f'{self.user.user.first_name} {self.user.user.last_name}'
+    #         roll_num = 'CS-18180'
+    #         user_profile_pic = cv2.imread(user_profile)
+    #         issue_date = self.get_formatted_date(timezone.now())
+    #         expiry_date = self.get_expiry_date(self.voucher.month, self.voucher.year)
 
-            new_card = id_card_generate(
-                organization_logo,
-                organization_abbr, 
-                department, 
-                fee_price,
-                user_full_name,
-                user_profile_pic,
-                roll_num,
-                issue_date,
-                expiry_date
-            )
+    #         new_card = id_card_generate(
+    #             organization_logo,
+    #             organization_abbr, 
+    #             department, 
+    #             fee_price,
+    #             user_full_name,
+    #             user_profile_pic,
+    #             roll_num,
+    #             issue_date,
+    #             expiry_date
+    #         )
 
-            self.card.save(new_card['name'], new_card['content'], save=False)
+    #         self.card.save(new_card['name'], new_card['content'], save=False)
 
-        super(FeeSubmission, self).save(*args, **kwargs)
+    #     super(FeeSubmission, self).save(*args, **kwargs)
 
 
 class Account(models.Model):
