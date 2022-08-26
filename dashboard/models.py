@@ -119,7 +119,7 @@ class UserInfo(models.Model):
             raise Exception("Given batch no. is invalid")
 
         if number_part > 300:
-            raise Exception("Given batch no. is invalid")
+            raise Exception("Given seat no. is invalid")
 
         return True        
 
