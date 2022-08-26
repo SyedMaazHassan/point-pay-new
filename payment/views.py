@@ -13,6 +13,31 @@ from payment.serializers import *
 
 
 
+
+class PaymentHistoryApi(APIView, ApiResponse):
+    authentication_classes = [RequestAuthentication]
+
+    def __init__(self):
+        ApiResponse.__init__(self)
+
+    def get(self, request):
+        try:
+            user = getUserByUid(request.headers.get("uid"))
+            transactions = Transaction.objects.filter(account__user = user)
+            serialized_transactions = TransactionSerializer(transactions, many = True).data
+            print(serialized_transactions)    
+
+
+            # # voucher_created = isVoucherAlreadyCreated(user)
+            response = {
+                "payment_history": serialized_transactions
+            }
+            self.postSuccess(response, "History fetched successfully")
+        except Exception as e:
+            self.postError({"payment_history": str(e)})
+        return Response(self.output_object)
+
+
 # Payment api
 class PaymentApi(APIView, ApiResponse):
     authentication_classes = [RequestAuthentication]

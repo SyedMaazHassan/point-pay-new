@@ -12,7 +12,7 @@ urlpatterns = [
 
     path("payment/initiate", PaymentApi.as_view(), name="payment"),
     path("payment/verify", PaymentApi.as_view(), name="payment"),
-    
+    path("payment/history", PaymentHistoryApi.as_view(), name="payment"),
 
 
     # path("student", StudentApi.as_view()),

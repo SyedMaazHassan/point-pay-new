@@ -1,5 +1,6 @@
 from dashboard.models import *
 from dashboard.supporting_func import getUserByUid, isVoucherAlreadyCreated
+from payment.models import FeeSubmission
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.response import Response
 from rest_framework import exceptions
@@ -263,9 +264,16 @@ class DriverApi(APIView, ApiResponse):
     def post(self, request):
         try:
             phone = request.data.get("phone")
-            phone = phone.replace(" ", "+")
             pin = request.data.get("pin")
 
+            if not phone:
+                raise Exception("Phone no. is required")
+
+            if not pin:
+                raise Exception("PIN is required")
+            
+            phone = phone.replace(" ", "+")
+            
             driver = Driver.objects.filter(phone=phone, pin=pin).first()
             if not driver:
                 raise Exception("Invalid driver credentials")
@@ -300,15 +308,6 @@ class DriverApi(APIView, ApiResponse):
         return Response(self.output_object)
 
 
-
-
-
-
-
-
-
-
-
 # voucher api
 class VoucherApi(APIView, ApiResponse):
     authentication_classes = [RequestAuthentication]
@@ -321,6 +320,15 @@ class VoucherApi(APIView, ApiResponse):
             uid = request.headers.get("uid")        
             user = getUserByUid(uid)
             voucher_created = isVoucherAlreadyCreated(user)
+
+            if voucher_created:
+                fee_submission_obj = FeeSubmission.objects.filter(
+                    user = user, 
+                    voucher = voucher_created
+                ).first()
+                if fee_submission_obj:
+                    voucher_created = None
+
             response = {
                 "voucher": {
                     "is_available": voucher_created != None,
