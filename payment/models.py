@@ -147,16 +147,19 @@ def create_account(sender, instance, created, **kwargs):
                         user = instance
                     )
                     account.credit(1000, "System", "Free credit provided by the system")
+                
                 elif instance.status == "admin":
-                    account = Account.objects.create(
-                        title = instance.organization.name,
-                        organization = instance.organization
-                    )  
+                    account_check = Account.objects.filter(organization = instance.organization).first()
+                    if not account_check:
+                        account = Account.objects.create(
+                            title = instance.organization.name,
+                            organization = instance.organization
+                        )  
         except:
             print("something went wrong")
             instance.delete()
             raise Exception("Error while creating the account. Try registering the user again.")
-
+    print("nothing works")
 
 class Transaction(models.Model):
     transaction_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -169,6 +172,9 @@ class Transaction(models.Model):
     source = models.CharField(max_length=255)
     note = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ("-created_at",)
 
 
 class RequestConfirmation(VoucherUser):

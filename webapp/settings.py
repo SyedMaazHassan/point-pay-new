@@ -17,6 +17,7 @@ from decouple import config as env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENVIRO = env('enviro')
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +27,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "e==u0$%jf&(v@_q8m#^3ue%8o^yomj9)pqz+$+#j8izdp=6dcf"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ENVIRO == "local":
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -182,6 +186,5 @@ CURRENCY_SYMBOL = "Rs"
 POINTPAY_FEE = 0
 
 
-ENVIRO = env('enviro')
 LOCALHOST = env("localhost")
 LIVEHOST = env("livehost")

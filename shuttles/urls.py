@@ -14,8 +14,6 @@ urlpatterns = [
         login_required(views.ShuttleDetailView.as_view()),
         name="select-shuttle",
     ),
-    # path("", view=views.all_drivers, name="all"),
-    # path("<driver_id>/view/", view=views.select_driver, name="select-driver"),
     path("<shuttle_id>/edit/", view=views.edit_shuttle, name="edit-shuttle"),
     path("add/", view=views.add_shuttle, name="add-shuttle"),
     path("<shuttle_id>/delete/", view=views.delete_shuttle, name="delete-shuttle"),

@@ -5,26 +5,30 @@ from dashboard.supporting_func import *
 from dashboard.models import *
 from dashboard.supporting_func import getUser
 from django.contrib import messages
+from authentication.decorators import djangoAdminNotAllowed
+from payment.models import FeeSubmission
 
-def getAllStudents(organization):
-    return Voucher.objects.filter(organization = organization)
-
+@djangoAdminNotAllowed
 @login_required
-def students(request):
+def students(request, student_id=None):
     user = getUser(request.user)
-    context = {'page': 'students', 'all_vouchers': getAllStudents(user.organization)}
-    return render(request, "home/students.html", context)
+    all_students = UserInfo.objects.filter(organization = user.organization, status = "student").order_by("-added_at")
+    single_student = None
+    is_current_paid = False
+    if student_id:
+        student = all_students.filter(id = student_id).first()
+        if not student:
+            messages.error(request, "No student exists with the given id")
+            return redirect("students:all")
+        single_student = student
+        is_current_paid_check = FeeSubmission.objects.filter(user = single_student, voucher__month = timezone.now().month)
+        is_current_paid = is_current_paid_check.exists()
 
-
-@login_required
-def single_student(request, voucher_id):
-    user = getUser(request.user)
-    context = {'page': 'vouchers', 'all_vouchers': getAllStudents(user.organization)}
-    # my voucher
-    voucher = Voucher.objects.filter(id = voucher_id, organization = user.organization).first()
-    if voucher:
-        context['single_voucher'] = voucher
-    else:
-        messages.error(request, "Voucher doesn't exist with this id OR you don't have access")
-        return redirect('vouchers:all')
-    return render(request, "home/vouchers.html", context)
+    context = {
+        'page': 'students', 
+        'all_students': all_students, 
+        'single_student': single_student,
+        'is_current_paid': is_current_paid,
+        'total_departments': Department.objects.filter(organization = user.organization).count()
+    }
+    return render(request, "home/students/index.html", context)

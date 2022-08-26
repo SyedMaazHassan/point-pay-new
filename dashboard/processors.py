@@ -1,11 +1,6 @@
 from dashboard.supporting_func import getUser
-from django.shortcuts import redirect
 
-def current_user(request):
-    if request.user.is_superuser:
-        return redirect("/admin")
-
-
+def current_user(request):        
     user = getUser(request.user) if request.user.is_authenticated else None
     return { 'myuser': user}
 

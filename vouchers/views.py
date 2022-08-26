@@ -1,19 +1,17 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from dashboard.supporting_func import *
 from dashboard.models import *
 from dashboard.supporting_func import getUser
 from django.contrib import messages
 from payment.models import FeeSubmission
 from vouchers.models import *
-from faker import Faker
-from random import randint, choice
+from authentication.decorators import djangoAdminNotAllowed
 
 # from rest_framework import generics, status, viewsets
-fake = Faker()
 # Create your views here.
 
+@djangoAdminNotAllowed
 @login_required
 def transactions(request, voucher_id):
     user = getUser(request.user)
@@ -37,7 +35,7 @@ def transactions(request, voucher_id):
 
 
 
-
+@djangoAdminNotAllowed
 @login_required
 def create_voucher(request):
     myuser = getUser(request.user)
@@ -62,7 +60,7 @@ def create_voucher(request):
 def getAllVouchers(organization):
     return Voucher.objects.filter(organization=organization)
 
-
+@djangoAdminNotAllowed
 @login_required
 def vouchers(request):
     user = getUser(request.user)
@@ -77,6 +75,7 @@ def vouchers(request):
     return render(request, "home/vouchers/vouchers.html", context)
 
 
+@djangoAdminNotAllowed
 @login_required
 def single_voucher(request, voucher_id):
     user = getUser(request.user)
