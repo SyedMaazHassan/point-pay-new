@@ -29,27 +29,6 @@ def transactions(request, voucher_id):
     fee_submissions = FeeSubmission.objects.filter(voucher = voucher)
     print(fee_submissions)
 
-    # students = [
-    #     {
-    #         "id": 40064,
-    #         "name": "Syed Maaz Hassan",
-    #         "roll_no": "CS-18054",
-    #         "issue_date": 8,
-    #     }
-    # ]
-    # depart = ["CS", "ME", "EE", "EC", "SE", "CI", "CH"]
-    # batch = ["18", "19", "20", "21"]
-    # for i in range(40065, 40079):
-    #     student_data = {}
-    #     student_data["id"] = i
-    #     student_data["name"] = fake.name()
-    #     roll_no = choice(depart) + "-" + choice(batch)
-    #     no = randint(1, 150)
-    #     no = ("0" + str(no)) if no < 100 else str(no)
-    #     student_data["roll_no"] = roll_no + no
-    #     student_data["issue_date"] = randint(1, 12)
-    #     students.append(student_data)
-
     context = {
         "fee_submissions": fee_submissions,
         "single_voucher": Voucher.objects.filter(id=voucher_id).first(),

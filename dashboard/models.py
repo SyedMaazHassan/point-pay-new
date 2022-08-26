@@ -59,6 +59,13 @@ class Department(models.Model):
     name = models.CharField(max_length=50)
     added_at = models.DateTimeField(default=timezone.now)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return f"{self.name} ({self.abbr})"
+
+    def save(self, *args, **kwargs):
+        self.abbr = self.abbr.upper()
+        super(Department, self).save(*args, **kwargs)
 
 
 class UserInfo(models.Model):
@@ -89,18 +96,32 @@ class UserInfo(models.Model):
             raise Exception("Roll no. is required")
         if "-" not in self.roll_no:
             raise Exception("Roll no. must be in correct format (CS-11001)")        
+        print("given roll:", self.roll_no)
         all_dept_abbrs = Department.objects.filter(organization_id = self.organization_id).values_list("abbr", flat=True)
+        print("all dept list: ", all_dept_abbrs)
         roll_splited = self.roll_no.split("-")
+        print("=splitted roll no.", roll_splited)
         dept_part = roll_splited[0].upper()
+        print("=dept part", dept_part)
         num_part = roll_splited[1]
+        print("=number part", num_part)
         if dept_part not in all_dept_abbrs:
             raise Exception("Given department is not included in your university")
         if len(num_part) != 5:
             raise Exception("Roll no. must be in correct format (CS-11001)")
-        current_timezone = timezone.now().year
+        current_timezone_year = timezone.now().year - 2000
         year_part = int(num_part[:2])
         number_part = int(num_part[2:])
-        # if year_part > 
+        print("==year part", year_part, "<=>", "current year", current_timezone_year)
+        print("==Seat part", number_part)
+        
+        if year_part > current_timezone_year:
+            raise Exception("Given batch no. is invalid")
+
+        if number_part > 300:
+            raise Exception("Given batch no. is invalid")
+
+        return True        
 
 
         
@@ -112,6 +133,9 @@ class UserInfo(models.Model):
         return f"{self.user.first_name} {self.user.last_name} - {self.status} - {self.organization.abbr}"
 
     def save(self, *args, **kwargs):
+        if not self.pk and self.status == "student":
+            self.validate_roll_no()
+
         phone = self.phone
         if phone:
             phone = phone.replace("-", "")

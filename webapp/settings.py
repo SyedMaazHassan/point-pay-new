@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from decouple import config as env
 
 # import urllib.parse as up
 
@@ -71,6 +72,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "dashboard.processors.current_base_domain",
                 "dashboard.processors.current_user",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -178,3 +180,8 @@ BOOTSTRAP5 = {
 PAYMENT_SESSION_EXPIRY_MIN = 4
 CURRENCY_SYMBOL = "Rs"
 POINTPAY_FEE = 0
+
+
+ENVIRO = env('enviro')
+LOCALHOST = env("localhost")
+LIVEHOST = env("livehost")
