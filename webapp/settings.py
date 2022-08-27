@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "map",
     "payment",
     "authentication.apps.AuthenticationConfig",
@@ -89,6 +90,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "webapp.wsgi.application"
 
+
+# Jazzmind setting
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin",
+    "site_logo": "logo2.jpeg",
+    "copyright": "Point Pay Ltd",
+    "site_icon": "logo3.png",
+    "site_logo_classes": "img-circle",
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
