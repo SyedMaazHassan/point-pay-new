@@ -41,7 +41,7 @@ class FeeSubmission(VoucherUser):
         year = self.voucher.year
         last_date = 28 if month == 2 else 30
         date_obj = datetime.datetime(year, month, last_date)
-        return date_obj.strftime("%b %d/%y")
+        return date_obj.strftime("%b %d, %y")
 
 
     def save(self, *args, **kwargs):
