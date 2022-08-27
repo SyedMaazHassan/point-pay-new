@@ -13,8 +13,8 @@ urlpatterns = [
     path("api/payment/initiate", PaymentApi.as_view(), name="payment"),
     path("api/payment/verify", PaymentApi.as_view(), name="payment"),
     path("api/payment/history", PaymentHistoryApi.as_view(), name="payment"),
-    path("wallet/", wallet, name="wallet"),
-    path("withdraw/", withdraw_funds, name="withdraw")
+    path("dashboard/wallet/", wallet, name="wallet"),
+    path("dashboard/withdraw/", withdraw_funds, name="withdraw")
 
 ]
 

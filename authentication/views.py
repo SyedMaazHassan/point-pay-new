@@ -31,13 +31,19 @@ def login_submit(request):
             password = request.POST['password']
             user = auth.authenticate(username=username, password=password)
             if user is not None and not user.is_superuser:
-                auth.login(request, user)
-                print(user)
 
-                # Expire vouchers
-                expireVouchers(user)
+                user_info_obj = getUser(user)
+                if user_info_obj.status != "student":
+                    auth.login(request, user)
+                    print(user)
 
-                return redirect("dashboard:index")
+                    # Expire vouchers
+                    expireVouchers(user)
+
+                    return redirect("dashboard:index")
+                else:
+                    print("Student he haha")
+                    messages.error(request, "Username or password is incorrect!")
             else:
                 messages.error(request, "Username or password is incorrect!")
         else:

@@ -23,14 +23,14 @@ handler404 = 'authentication.views.error_404_handler'
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("landing/", include("landing.urls")),
-    path("authentication/", include("authentication.urls")),
-    path("", include("dashboard.urls")),
-    path("vouchers/", include("vouchers.urls")),
-    path("students/", include("students.urls")),
-    path("drivers/", include("drivers.urls")),
-    path("shuttles/", include("shuttles.urls")),
-    path("map/", include("map.urls")),
+    path("", include("landing.urls")),
+    path("dashboard/authentication/", include("authentication.urls")),
+    path("dashboard/", include("dashboard.urls")),
+    path("dashboard/vouchers/", include("vouchers.urls")),
+    path("dashboard/students/", include("students.urls")),
+    path("dashboard/drivers/", include("drivers.urls")),
+    path("dashboard/shuttles/", include("shuttles.urls")),
+    path("dashboard/map/", include("map.urls")),
     path("api/", include("api.urls")),
     path("", include("payment.urls")),
 ]

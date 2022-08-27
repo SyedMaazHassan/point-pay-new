@@ -147,8 +147,8 @@ class UserInfo(models.Model):
     def save(self, *args, **kwargs):
         if self.status == "student":
             self.validate_roll_no()
-            if not self.id_card_front_pic or not self.id_card_back_pic:
-                raise Exception("ID card pictures are required.")
+            # if not self.id_card_front_pic or not self.id_card_back_pic:
+            #     raise Exception("ID card pictures are required.")
 
         phone = self.phone
         if phone:

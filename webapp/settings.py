@@ -176,8 +176,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
-LOGIN_URL = "/authentication/login/"
-LOGIN_REDIRECT_URL = "/"
+
+LOGIN_URL = "/dashboard/authentication/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
 
 
 MEDIA_URL = "/media/"
