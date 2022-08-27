@@ -1,5 +1,7 @@
+from urllib import request
 from dashboard.models import *
 from dashboard.supporting_func import getUserByUid, isVoucherAlreadyCreated
+from payment.models import Account, FeeSubmission
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.response import Response
 from rest_framework import exceptions
@@ -9,17 +11,36 @@ from api.models import *
 from api.serializers import *
 from api.authentication import RequestAuthentication, ApiResponse
 from api.support import beautify_errors
-import copy
-import json
 from rest_framework.views import APIView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-
+from payment.models import Account
 # Create your views here.
 
 
 def index(request):
     return render(request, "dashboard/abc.html")
+
+
+class AccountApi(APIView, ApiResponse):
+    def __init__(self):
+        ApiResponse.__init__(self)
+
+    def get(self, request):
+        try:
+            uid = request.headers.get("uid")        
+            user = getUserByUid(uid)
+            account = Account.objects.filter(user = user).first()
+            if not account:
+                raise Exception("Account not found")
+            serialized_account = AccountSerializer(account, many = False).data
+            output = {
+                "account": serialized_account
+            }
+            self.postSuccess(output, "Account fetched successfully")
+        except Exception as e:
+            self.postError({"account": str(e)})
+        return Response(self.output_object)
 
 
 class StudentApi(APIView, ApiResponse):
@@ -49,14 +70,20 @@ class StudentApi(APIView, ApiResponse):
             if not roll_no:
                 raise Exception("Roll no. is required.")
             profile_picture = data.get("profile_picture")
+            id_card_front_pic = data.get("id_card_front_pic")
+            id_card_back_pic = data.get("id_card_back_pic")
             student = UserInfo(
                 uid=uid,
                 user=user,
                 status="student",
                 roll_no=roll_no,
                 organization_id=data.get("organization_id"),
-                phone=data.get("phone"),
+                phone=data.get("phone")
             )
+            if id_card_front_pic and id_card_back_pic:
+                student.id_card_front_pic = id_card_front_pic
+                student.id_card_back_pic = id_card_back_pic
+            
             if profile_picture:
                 student.profile_picture = profile_picture
             student.save()
@@ -96,15 +123,6 @@ class StudentApi(APIView, ApiResponse):
             self.postError({"student": str(e)})
         return Response(self.output_object)
 
-    # def delete(self, request, uid):
-    #     try:
-    #         student = UserInfo.objects.get(uid=uid)
-    #         student.user.delete()
-    #         student.delete()
-    #         self.postSuccess({}, "Student deleted successfully")
-    #     except Exception as e:
-    #         self.postError({"student": str(e)})
-    #     return Response(self.output_object)
 
     def patch(self, request, uid):
         try:
@@ -114,6 +132,8 @@ class StudentApi(APIView, ApiResponse):
                 student.phone = data.get("phone")
             if data.get("profile_picture"):
                 student.profile_picture = data.get("profile_picture")
+            if data.get("roll_no"):
+                student.roll_no = data.get("roll_no")
             student.save()
             if request.data.get("email") and student.user.email != request.data.get(
                 "email"
@@ -169,24 +189,6 @@ class DriverShuttleApi(APIView, ApiResponse):
     def __init__(self):
         ApiResponse.__init__(self)
 
-    # def post(self, request, uid=None):
-    #     try:
-    #         data = request.data.copy()
-    #         stripe_cust_id = self.create_stripe_user(data)
-    #         data["stripe_cust_id"] = stripe_cust_id
-    #         data["uid"] = uid
-    #         serializer = UserSerializer(data=data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             user = UserInfo.objects.get(uid=uid)
-    #             self.add_payment_info(user)
-    #             self.postSuccess({"user": serializer.data}, "User added successfully")
-    #         else:
-    #             self.delete_stripe_user(stripe_cust_id)
-    #             self.postError(beautify_errors(serializer.errors))
-    #     except Exception as e:
-    #         self.postError({"uid": str(e)})
-    #     return Response(self.output_object)
 
     def get(self, request):
         try:
@@ -263,9 +265,16 @@ class DriverApi(APIView, ApiResponse):
     def post(self, request):
         try:
             phone = request.data.get("phone")
-            phone = phone.replace(" ", "+")
             pin = request.data.get("pin")
 
+            if not phone:
+                raise Exception("Phone no. is required")
+
+            if not pin:
+                raise Exception("PIN is required")
+            
+            phone = phone.replace(" ", "+")
+            
             driver = Driver.objects.filter(phone=phone, pin=pin).first()
             if not driver:
                 raise Exception("Invalid driver credentials")
@@ -300,15 +309,6 @@ class DriverApi(APIView, ApiResponse):
         return Response(self.output_object)
 
 
-
-
-
-
-
-
-
-
-
 # voucher api
 class VoucherApi(APIView, ApiResponse):
     authentication_classes = [RequestAuthentication]
@@ -321,6 +321,15 @@ class VoucherApi(APIView, ApiResponse):
             uid = request.headers.get("uid")        
             user = getUserByUid(uid)
             voucher_created = isVoucherAlreadyCreated(user)
+
+            if voucher_created:
+                fee_submission_obj = FeeSubmission.objects.filter(
+                    user = user, 
+                    voucher = voucher_created
+                ).first()
+                if fee_submission_obj:
+                    voucher_created = None
+
             response = {
                 "voucher": {
                     "is_available": voucher_created != None,

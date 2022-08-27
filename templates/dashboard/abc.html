@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
 </head>
 <body>
-    <h1>Successfully rendered</h1>
+    <div style="width: 100%; height: 100%; text-align: center;">
+        <div style="margin-top:50px;">
+            <img src="{% static 'assets/img/my-logo.png' %}" style="width: 200px;" alt="">            
+            <br>
+            <img style="width: 450px;" src="https://cdn.dribbble.com/users/13754/screenshots/5552890/runner2.gif" alt="">
+            <p style="font-size: 20px; color:#cccccc; font-family:Verdana, Geneva, Tahoma, sans-serif">APIs are up and running</p>
+
+        </div>
+    </div>
 </body>
 </html>

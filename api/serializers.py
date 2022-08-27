@@ -6,7 +6,7 @@ from api.models import *
 from drivers.models import *
 from shuttles.models import *
 from dashboard.models import Organization, UserInfo, Voucher
-
+from payment.models import Account
 """
 This file contains serializers that is providing
 validation and bring data from database safely
@@ -19,6 +19,13 @@ and validate them properly
 # ###########################################################
 # ###   FOR getting voucher by driver API  - START     #####
 # ###########################################################
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ["account_id", "title", "balance", "created_at"]
+    
 
 class VoucherSerializer(serializers.ModelSerializer):
     class Meta:

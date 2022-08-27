@@ -1,3 +1,4 @@
+from importlib.metadata import requires
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
@@ -8,6 +9,12 @@ from django.contrib import messages
 from drivers.forms import *
 from django.views.generic import ListView
 
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormMixin
+from django.urls import reverse
+from authentication.decorators import djangoAdminNotAllowed
+
+
 
 class DriverListView(ListView):
     template_name = "home/drivers/all-drivers.html"
@@ -16,43 +23,10 @@ class DriverListView(ListView):
     page = "drivers"
     single_driver = None
 
-    # def get_queryset(self):
-    #     self.user = getUser(self.request.user)
-    #     driver_id = self.kwargs.get("driver_id")
-    #     all_drivers = Driver.objects.filter(organization=self.user.organization)
-    #     single_driver = None
-
-    #     if driver_id:
-    #         if driver_id.isdigit():
-    #             single_driver = Driver.objects.filter(
-    #                 id=driver_id, organization=self.user.organization
-    #             ).first()
-
-    #             if single_driver:
-    #                 self.single_driver = single_driver
-    #                 return all_drivers
-
-    #         messages.error(
-    #             self.request,
-    #             "Driver doesn't exist with this id OR you don't have access",
-    #         )
-
-    #     self.single_driver = single_driver
-    #     return all_drivers
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page"] = "drivers"
         return context
-
-    # def get(self, *args, **kwargs):
-    #     print(args, kwargs, self.single_driver)
-    #     return super(DriverListView, self).get(*args, **kwargs)
-
-
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin
-from django.urls import reverse
 
 
 class DriverDetailView(DetailView):
@@ -62,6 +36,7 @@ class DriverDetailView(DetailView):
     template_name = "home/drivers/all-drivers.html"
     page = "drivers"
     temp_obj = True
+
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -89,6 +64,10 @@ class DriverDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            messages.error(request, "You are not allowed to access staff panel.")
+            return redirect("authentication:logout")
+
         obj = self.get_object()
         if not self.temp_obj:
             return redirect("drivers:all")
@@ -106,6 +85,7 @@ def get_pre_context(organization, form_title, driver_id):
     }
 
 
+@djangoAdminNotAllowed
 @login_required
 def edit_driver(request, driver_id):
     if not driver_id.isdigit():
@@ -133,9 +113,13 @@ def edit_driver(request, driver_id):
         )
         return redirect("drivers:all")
 
-
+@djangoAdminNotAllowed
 @login_required
 def add_driver(request):
+    if request.user.is_superuser:
+        messages.error(request, "You are not allowed to access Staff panel.")
+        return redirect("authentication:logout")
+
     user = getUser(request.user)
     context = get_pre_context(user.organization, "Add new driver", None)
     if request.method == "POST":
@@ -151,9 +135,13 @@ def add_driver(request):
     context["driver_form"] = driver_form
     return render(request, "home/drivers/all-drivers.html", context)
 
-
+@djangoAdminNotAllowed
 @login_required
 def delete_driver(request, driver_id):
+    if request.user.is_superuser:
+        messages.error(request, "You are not allowed to access Staff panel.")
+        return redirect("authentication:logout")
+
     if not driver_id.isdigit():
         messages.error(request, "Given driver id is invalid")
         return redirect("drivers:all")

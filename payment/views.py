@@ -1,3 +1,5 @@
+import re
+from django.contrib import messages
 from dashboard.models import *
 from dashboard.supporting_func import getUserByUid, getVoucherByCode, getAccountByOrg, getAccountByUser
 from payment.models import *
@@ -9,8 +11,90 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from api.serializers import VoucherSerializer
 from payment.serializers import *
+from dashboard.supporting_func import getUser
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from authentication.decorators import djangoAdminNotAllowed
+from django.db.models import Sum
+
 # Create your views here.
 
+@djangoAdminNotAllowed
+@login_required
+def withdraw_funds(request):
+    if request.method == "POST":
+        try:
+            user = getUser(request.user)
+            amount_to_withdraw = request.POST.get("amount_to_withdraw")
+            if not amount_to_withdraw:
+                messages.error(request, "Amount required to withdraw")
+            amount_to_withdraw = float(amount_to_withdraw)
+            account = Account.objects.filter(organization = user.organization).first()
+            message = "Amount transferred to given bank"
+            account.debit(
+                amount_to_withdraw,
+                "PointPay-wallet",
+                message
+            )
+            messages.success(request, message)
+        except Exception as e:
+            messages.error(request, str(e))
+        
+    return redirect("wallet") 
+
+
+@djangoAdminNotAllowed
+@login_required
+def wallet(request):
+    user = getUser(request.user)
+    account = Account.objects.filter(organization = user.organization).first()
+    if not account:
+        return redirect("dashboard:index")
+
+
+    all_transaction = Transaction.objects.filter(account = account)
+    balance = account.balance_num()
+    net_income = FeeSubmission.objects.filter(voucher__organization = user.organization).aggregate(Sum("voucher__price"))
+    net_income = net_income["voucher__price__sum"]
+    balance = balance if balance else 0
+    net_income = net_income if net_income else 0
+    withdrawn_funds = net_income - balance
+
+    my_datetime = timezone.now().strftime("%B, %Y")
+    context = {
+        "page": "transactions",
+        "timestamp": my_datetime,
+        "all_transactions": all_transaction,
+        "balance": balance,
+        "withdrawn_funds": withdrawn_funds,
+        "net_income": net_income
+    }
+    return render(request, "home/payment/wallet.html", context)
+
+
+
+class PaymentHistoryApi(APIView, ApiResponse):
+    authentication_classes = [RequestAuthentication]
+
+    def __init__(self):
+        ApiResponse.__init__(self)
+
+    def get(self, request):
+        try:
+            user = getUserByUid(request.headers.get("uid"))
+            transactions = Transaction.objects.filter(account__user = user)
+            serialized_transactions = TransactionSerializer(transactions, many = True).data
+            print(serialized_transactions)    
+
+
+            # # voucher_created = isVoucherAlreadyCreated(user)
+            response = {
+                "payment_history": serialized_transactions
+            }
+            self.postSuccess(response, "History fetched successfully")
+        except Exception as e:
+            self.postError({"payment_history": str(e)})
+        return Response(self.output_object)
 
 
 # Payment api

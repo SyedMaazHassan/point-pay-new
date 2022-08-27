@@ -1,18 +1,18 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from dashboard.supporting_func import *
 from dashboard.models import *
 from dashboard.supporting_func import getUser
 from django.contrib import messages
 from payment.models import FeeSubmission
 from vouchers.models import *
-from faker import Faker
-from random import randint, choice
+from authentication.decorators import djangoAdminNotAllowed
 
 # from rest_framework import generics, status, viewsets
-fake = Faker()
 # Create your views here.
+
+@djangoAdminNotAllowed
+@login_required
 def transactions(request, voucher_id):
     user = getUser(request.user)
     voucher = Voucher.objects.filter(
@@ -27,27 +27,6 @@ def transactions(request, voucher_id):
     fee_submissions = FeeSubmission.objects.filter(voucher = voucher)
     print(fee_submissions)
 
-    # students = [
-    #     {
-    #         "id": 40064,
-    #         "name": "Syed Maaz Hassan",
-    #         "roll_no": "CS-18054",
-    #         "issue_date": 8,
-    #     }
-    # ]
-    # depart = ["CS", "ME", "EE", "EC", "SE", "CI", "CH"]
-    # batch = ["18", "19", "20", "21"]
-    # for i in range(40065, 40079):
-    #     student_data = {}
-    #     student_data["id"] = i
-    #     student_data["name"] = fake.name()
-    #     roll_no = choice(depart) + "-" + choice(batch)
-    #     no = randint(1, 150)
-    #     no = ("0" + str(no)) if no < 100 else str(no)
-    #     student_data["roll_no"] = roll_no + no
-    #     student_data["issue_date"] = randint(1, 12)
-    #     students.append(student_data)
-
     context = {
         "fee_submissions": fee_submissions,
         "single_voucher": Voucher.objects.filter(id=voucher_id).first(),
@@ -56,7 +35,7 @@ def transactions(request, voucher_id):
 
 
 
-
+@djangoAdminNotAllowed
 @login_required
 def create_voucher(request):
     myuser = getUser(request.user)
@@ -81,7 +60,7 @@ def create_voucher(request):
 def getAllVouchers(organization):
     return Voucher.objects.filter(organization=organization)
 
-
+@djangoAdminNotAllowed
 @login_required
 def vouchers(request):
     user = getUser(request.user)
@@ -96,6 +75,7 @@ def vouchers(request):
     return render(request, "home/vouchers/vouchers.html", context)
 
 
+@djangoAdminNotAllowed
 @login_required
 def single_voucher(request, voucher_id):
     user = getUser(request.user)

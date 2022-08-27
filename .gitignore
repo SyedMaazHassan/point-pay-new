@@ -2,3 +2,5 @@ __pycache__/
 /.env
 .env
 /web
+db.sqlite3
+*.sqlite3

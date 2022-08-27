@@ -1,12 +1,14 @@
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from dashboard.supporting_func import *
 from shuttles.models import Shuttle
 from dashboard.supporting_func import getUser
 from django.contrib import messages
 from shuttles.forms import *
 from django.views.generic import ListView
+from django.views.generic.detail import DetailView
+from authentication.decorators import djangoAdminNotAllowed
+
 
 
 class ShuttleListView(ListView):
@@ -16,43 +18,11 @@ class ShuttleListView(ListView):
     page = "shuttles"
     single_shuttle = None
 
-    # def get_queryset(self):
-    #     self.user = getUser(self.request.user)
-    #     driver_id = self.kwargs.get("driver_id")
-    #     all_drivers = Driver.objects.filter(organization=self.user.organization)
-    #     single_driver = None
-
-    #     if driver_id:
-    #         if driver_id.isdigit():
-    #             single_driver = Driver.objects.filter(
-    #                 id=driver_id, organization=self.user.organization
-    #             ).first()
-
-    #             if single_driver:
-    #                 self.single_driver = single_driver
-    #                 return all_drivers
-
-    #         messages.error(
-    #             self.request,
-    #             "Driver doesn't exist with this id OR you don't have access",
-    #         )
-
-    #     self.single_driver = single_driver
-    #     return all_drivers
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page"] = "shuttles"
         return context
 
-    # def get(self, *args, **kwargs):
-    #     print(args, kwargs, self.single_driver)
-    #     return super(DriverListView, self).get(*args, **kwargs)
-
-
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin
-from django.urls import reverse
 
 
 class ShuttleDetailView(DetailView):
@@ -89,6 +59,10 @@ class ShuttleDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            messages.error(request, "You are not allowed to access staff panel.")
+            return redirect("authentication:logout")
+
         obj = self.get_object()
         if not self.temp_obj:
             return redirect("shuttles:all")
@@ -105,7 +79,7 @@ def get_pre_context(organization, form_title, shuttle_id):
         "form_title": form_title,
     }
 
-
+@djangoAdminNotAllowed
 @login_required
 def edit_shuttle(request, shuttle_id):
     if not shuttle_id.isdigit():
@@ -133,7 +107,7 @@ def edit_shuttle(request, shuttle_id):
         )
         return redirect("shuttles:all")
 
-
+@djangoAdminNotAllowed
 @login_required
 def add_shuttle(request):
     user = getUser(request.user)
@@ -151,7 +125,7 @@ def add_shuttle(request):
     context["shuttle_form"] = shuttle_form
     return render(request, "home/shuttles/all-shuttles.html", context)
 
-
+@djangoAdminNotAllowed
 @login_required
 def delete_shuttle(request, shuttle_id):
     if not shuttle_id.isdigit():

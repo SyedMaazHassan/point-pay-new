@@ -8,8 +8,21 @@ from payment.models import *
 
 
 
+
+
+
+
+
 class FeeSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FeeSubmission
         # fields = ["card"]
         exclude = ["id", "voucher", "user"]
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    fee_submission = FeeSubmissionSerializer(many = False)
+    class Meta:
+        model = Transaction
+        # fields = ["card"]
+        exclude = ["id", "account"]

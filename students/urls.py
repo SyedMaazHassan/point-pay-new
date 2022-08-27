@@ -8,6 +8,7 @@ from django.urls import path, include
 app_name = "students"
 urlpatterns = [
     path("", view=views.students, name="all"),
+    path("<student_id>/view/", view=views.students, name="view-student"),
 ]
 
 urlpatterns = urlpatterns + \

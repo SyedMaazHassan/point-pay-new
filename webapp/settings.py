@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from decouple import config as env
 
 # import urllib.parse as up
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENVIRO = env('enviro')
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +27,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "e==u0$%jf&(v@_q8m#^3ue%8o^yomj9)pqz+$+#j8izdp=6dcf"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ENVIRO == "local":
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -33,6 +38,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "map",
     "payment",
     "authentication.apps.AuthenticationConfig",
@@ -71,6 +77,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "dashboard.processors.current_base_domain",
                 "dashboard.processors.current_user",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -83,6 +90,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "webapp.wsgi.application"
 
+
+# Jazzmind setting
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin",
+    "site_logo": "logo2.jpeg",
+    "copyright": "Point Pay Ltd",
+    "site_icon": "logo3.png",
+    "site_logo_classes": "img-circle",
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -178,3 +194,7 @@ BOOTSTRAP5 = {
 PAYMENT_SESSION_EXPIRY_MIN = 4
 CURRENCY_SYMBOL = "Rs"
 POINTPAY_FEE = 0
+
+
+LOCALHOST = env("localhost")
+LIVEHOST = env("livehost")
