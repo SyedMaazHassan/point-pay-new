@@ -8,10 +8,7 @@ from dashboard.supporting_func import getUser
 from django.contrib import messages
 from drivers.forms import *
 from django.views.generic import ListView
-
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin
-from django.urls import reverse
 from authentication.decorators import djangoAdminNotAllowed
 
 

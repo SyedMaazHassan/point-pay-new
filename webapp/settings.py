@@ -199,3 +199,8 @@ POINTPAY_FEE = 0
 
 LOCALHOST = env("localhost")
 LIVEHOST = env("livehost")
+
+STRIPE = {
+    'publishableKey': env("publishableKey"),
+    'secretKey': env("secretKey")
+}

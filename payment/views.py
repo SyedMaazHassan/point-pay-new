@@ -1,3 +1,4 @@
+from calendar import c
 import re
 from django.contrib import messages
 from dashboard.models import *
@@ -16,6 +17,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from authentication.decorators import djangoAdminNotAllowed
 from django.db.models import Sum
+import stripe
+stripe.api_key = settings.STRIPE['secretKey']
 
 # Create your views here.
 
@@ -94,6 +97,76 @@ class PaymentHistoryApi(APIView, ApiResponse):
             self.postSuccess(response, "History fetched successfully")
         except Exception as e:
             self.postError({"payment_history": str(e)})
+        return Response(self.output_object)
+
+
+
+class TopupApi(APIView, ApiResponse):
+
+    authentication_classes = [RequestAuthentication]
+
+    def __init__(self):
+        ApiResponse.__init__(self)
+
+    def create_ephemeral_key(self, stripe_cust_id):
+        ephemeralKey = stripe.EphemeralKey.create(
+            customer=stripe_cust_id,
+            stripe_version="2020-03-02"
+        )
+        return ephemeralKey.secret
+
+    def create_payment_intent(self, stripe_cust_id, amount):
+        # amount_in_rs = amount
+        # amount_in_dollar = amount_in_rs / 221
+        paymentIntent = stripe.PaymentIntent.create(
+            amount=int(amount * 100),
+            currency="PKR",
+            customer=stripe_cust_id,
+            automatic_payment_methods={
+                'enabled': True,
+            }
+        )
+        return paymentIntent.client_secret
+
+
+    def get(self, request):
+        try:
+            # Get subscription
+            amount = request.query_params.get("amount")
+            if not amount:
+                raise Exception("Amount is required")
+            amount = int(amount)
+            # Get user object
+            user = UserInfo.objects.get(uid = request.headers['uid'])
+            # Get customer_id
+            stripe_cust_id = user.stripe_cust_id
+            # Get ephemeralKey 
+            ephemeral_key = self.create_ephemeral_key(stripe_cust_id)
+            # Get payment Intent
+            payment_intent = self.create_payment_intent(stripe_cust_id, amount)
+            
+            # Create new payment
+            # new_payment = Payment(
+            #     subscription = subscription,
+            #     user = user,
+            #     ephemeral_key = ephemeral_key,
+            #     payment_intent = payment_intent
+            # )
+            # new_payment.save()
+
+            output = {
+                'payment_sheet': {
+                    'paymentIntent': payment_intent,
+                    'ephemeralKey': ephemeral_key,
+                    'customer': stripe_cust_id,
+                    'publishableKey': settings.STRIPE['publishableKey']
+                }
+            }
+
+            self.postSuccess(output, 'Sheet info collected successfully')
+        except Exception as e:
+            self.postError({ 'payment_sheet': str(e) })
+
         return Response(self.output_object)
 
 

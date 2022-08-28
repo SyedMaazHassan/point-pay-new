@@ -8,7 +8,12 @@ from django.urls import path, include
 
 app_name = "dashboard"
 urlpatterns = [
-    path("", view=views.index, name="index")
+    path("", view=views.index, name="index"),
+    path("settings/", view=views.setting, name="settings"),
+    path("update-organization/", view=views.update_organization, name="update-organization"),
+    path("add-department/", view=views.add_department, name="add-department"),
+    
+    
 ]
 
 urlpatterns = urlpatterns + static(

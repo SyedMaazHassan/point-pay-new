@@ -14,8 +14,6 @@ import datetime
 # python manage.py migrate
 # python manage.py runserver
 
-
-
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=15, default="organization")
@@ -56,7 +54,7 @@ class Organization(models.Model):
 
 
 class Department(models.Model):
-    abbr = models.CharField(max_length=6, unique=True)
+    abbr = models.CharField(max_length=6)
     name = models.CharField(max_length=50)
     added_at = models.DateTimeField(default=timezone.now)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
@@ -66,14 +64,14 @@ class Department(models.Model):
 
     def save(self, *args, **kwargs):
         self.abbr = self.abbr.upper()
-        super(Department, self).save(*args, **kwargs)
-
+        if not Department.objects.filter(organization = self.organization, abbr = self.abbr).exists():
+            super(Department, self).save(*args, **kwargs)
 
 
 
 class UserInfo(models.Model):
     uid = models.CharField(
-        max_length=20,
+        max_length=255,
         unique=True,
         null=True,
         blank=True,
@@ -81,6 +79,7 @@ class UserInfo(models.Model):
     )
     STATUS_CHOICES = [("student", "Student"), ("admin", "Admin")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stripe_cust_id = models.CharField(max_length=255, null = True, blank = True)
     roll_no = models.CharField(max_length=255, null=True, blank=True)
     profile_picture = models.ImageField(upload_to="dp", default="dp/profile.jpg")
     id_card_front_pic = models.ImageField(upload_to = "id-cards", null=True, blank = True)
@@ -145,7 +144,11 @@ class UserInfo(models.Model):
         return f"{self.user.first_name} {self.user.last_name} - {self.status} - {self.organization.abbr}"
 
     def save(self, *args, **kwargs):
-        if self.status == "student":
+        if self.pk and not self.roll_no and self.status == "student":
+            self.validate_roll_no()
+    
+        
+        if not self.pk and self.status == "student":
             self.validate_roll_no()
             # if not self.id_card_front_pic or not self.id_card_back_pic:
             #     raise Exception("ID card pictures are required.")
