@@ -183,7 +183,8 @@ def create_account(sender, instance, created, **kwargs):
             print("something went wrong")
             instance.delete()
             raise Exception("Error while creating the account. Try registering the user again.")
-    print("nothing works")
+    else:
+        print("nothing works")
 
 class Transaction(models.Model):
     transaction_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

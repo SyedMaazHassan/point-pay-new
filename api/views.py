@@ -15,6 +15,8 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from payment.models import Account
+import stripe
+stripe.api_key = settings.STRIPE['secretKey']
 # Create your views here.
 
 
@@ -48,6 +50,14 @@ class StudentApi(APIView, ApiResponse):
 
     def __init__(self):
         ApiResponse.__init__(self)
+
+    def create_stripe_user(self, first_name, last_name, email):
+        full_name = f"{first_name} {last_name}"
+        customer = stripe.Customer.create(
+            name = full_name,
+            email = email
+        )
+        return customer['id']
 
     def createStudent(self, data, uid):
         all_students = UserInfo.objects.all()
@@ -86,6 +96,9 @@ class StudentApi(APIView, ApiResponse):
             
             if profile_picture:
                 student.profile_picture = profile_picture
+            student.save()
+            stripe_cust_id = self.create_stripe_user(user.first_name, user.last_name, user.username)
+            student.stripe_cust_id = stripe_cust_id
             student.save()
             return student
         except Exception as e:
