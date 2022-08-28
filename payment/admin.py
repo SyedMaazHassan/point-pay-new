@@ -73,4 +73,5 @@ admin.site.register(FeeSubmission)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(RequestConfirmation, RequestConfirmationAdmin)
+admin.site.register(TopupRequest)
 

@@ -129,6 +129,36 @@ class TopupApi(APIView, ApiResponse):
         return paymentIntent.client_secret
 
 
+    def post(self, request):
+        try:
+            user = UserInfo.objects.get(uid = request.headers['uid'])
+            stripe_cust_id = user.stripe_cust_id
+            payment_intent = request.data.get('paymentIntent')
+            ephemeral_key = request.data.get('ephemeralKey')
+
+            if not payment_intent or not ephemeral_key:
+                raise Exception("Both 'payment_intent' & 'ephemeral_key' are required")
+
+            print(stripe_cust_id)
+            print(payment_intent)
+            print(ephemeral_key)
+            topup_request = TopupRequest.objects.filter(
+                stripe_cust_id = stripe_cust_id,
+                payment_intent = payment_intent,
+                ephemeral_key = ephemeral_key
+            ).first()
+
+            if not topup_request:
+                raise Exception("Invalid confirmation of the topup")
+
+            topup_request.process()
+            self.postSuccess({}, f'Rs {topup_request.amount} has been credited into your point pay wallet!')
+        except Exception as e:
+            self.postError({ 'topup': str(e) })
+        return Response(self.output_object)
+
+
+
     def get(self, request):
         try:
             # Get subscription
@@ -146,13 +176,13 @@ class TopupApi(APIView, ApiResponse):
             payment_intent = self.create_payment_intent(stripe_cust_id, amount)
             
             # Create new payment
-            # new_payment = Payment(
-            #     subscription = subscription,
-            #     user = user,
-            #     ephemeral_key = ephemeral_key,
-            #     payment_intent = payment_intent
-            # )
-            # new_payment.save()
+            new_payment = TopupRequest(
+                amount = amount,
+                stripe_cust_id = stripe_cust_id,
+                ephemeral_key = ephemeral_key,
+                payment_intent = payment_intent
+            )
+            new_payment.save()
 
             output = {
                 'payment_sheet': {
@@ -163,9 +193,9 @@ class TopupApi(APIView, ApiResponse):
                 }
             }
 
-            self.postSuccess(output, 'Sheet info collected successfully')
+            self.postSuccess(output, 'Topup initiated successfully')
         except Exception as e:
-            self.postError({ 'payment_sheet': str(e) })
+            self.postError({ 'topup': str(e) })
 
         return Response(self.output_object)
 

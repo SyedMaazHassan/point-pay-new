@@ -1,3 +1,4 @@
+from statistics import mode
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -28,6 +29,29 @@ class VoucherUser(models.Model):
     class Meta:
         ordering = ['-created_at']
         abstract = True
+
+
+class TopupRequest(models.Model):
+    amount = models.FloatField()
+    stripe_cust_id = models.CharField(max_length=60)
+    ephemeral_key = models.CharField(max_length=60)
+    payment_intent = models.CharField(max_length=60)
+    is_used = models.BooleanField(default=False)
+
+    def process(self):
+        user = UserInfo.objects.filter(stripe_cust_id = self.stripe_cust_id).first()
+        if not user:
+            raise Exception("Request invalid")
+
+        account = Account.objects.get(user = user)
+        account.credit(
+            self.amount,
+            "User card",
+            "Amount from user card to Point pay wallet"
+        )
+        self.is_used = True
+        self.save()
+
 
 
 class FeeSubmission(VoucherUser):
