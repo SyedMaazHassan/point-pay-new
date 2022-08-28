@@ -1,0 +1,83 @@
+body {
+  overflow-x: hidden;
+}
+
+.top-headidng {
+  font-size: 58px !important;
+}
+
+.top-text {
+  font-size: 19px !important;
+}
+
+.top-headidng-2 {
+  font-size: 40px;
+}
+
+.form-select {
+  border-radius: 30px !important;
+  padding: 15px;
+  font-size: 17px;
+}
+
+.input-card {
+  border: none;
+  border-radius: 15px !important;
+}
+
+.icon {
+  font-size: 95px !important;
+}
+
+.card-1 {
+  transition: 0.2s;
+}
+.card-1:hover {
+  transform: scale(1.01);
+  transition: 0.2s;
+}
+
+.rounded-circle {
+  border: 3px solid white;
+  box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.116);
+}
+
+.coor {
+  color: #f0bc74 !important;
+  /* color: #1f2937 !important; */
+}
+
+.width {
+  width: 170px !important;
+}
+
+#design {
+  background-image: linear-gradient(
+    to right,
+    rgba(7, 9, 46, 0.904),
+    rgba(2, 4, 22, 0.884)
+  );
+}
+
+.musab {
+  box-shadow: 0 8px 15px 2px rgba(126, 126, 247, 0.301) !important;
+  border: none;
+}
+
+.card {
+  border-radius: 12px !important;
+}
+
+.link-list li {
+  list-style: none;
+  padding: 4px 0px;
+}
+
+.link-list {
+  padding: 0 !important;
+}
+@media screen and (max-width: 435px) {
+  .width {
+    width: auto !important;
+  }
+}

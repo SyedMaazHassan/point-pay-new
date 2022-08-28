@@ -1,0 +1,200 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'landing/css/index.css' %}">
+    <title>Point pay - track & pay on the go.</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'logo3.png' %}">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'landing:index' %}">
+                <img src="{% static 'landing/iimg/landing-page-logo.png' %}" style="width: 150px" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    </ul>
+                    <a class="d-flex" target="_blank" style="text-decoration: none" href="{% url 'dashboard:index' %}">
+                        <button class="btn btn-dark mx-2 px-4" type="submit">Go to dashboard</button>
+                    </a>
+                </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-6 my-3 px-0 d-flex align-items-center">
+                <div>
+                    <h1 class="top-headidng">
+                        University point fees<br> & tracking<br> <span class="coor">Simplified</span>
+                    </h1>
+                    <p class="text-secondary my-4 top-text">To enhance and modernize the hectic payment & point card generation process by developing the digital payment & tracking application for university buses (Shuttles) to help Students & staff in locating buses at stops in the morning, paying fee with 1 click and making point cards in seconds.</p>
+                    <div class="d-flex align-items-center">
+                        <a target="_blank" href="{% url 'dashboard:index' %}">
+                            <button type="button" class="btn py-2 px-3 width  btn-dark button">Get Started</button>
+                        </a>
+                        <a target="_blank" href="https://youtu.be/TQzAhXA4FYk" style="text-decoration: none;">
+
+                        <button type="button"
+                            class="d-flex align-items-center width  btn py-2 px-3 btn-outline-dark mx-3 button">
+                            <i class="material-icons">videocam</i> <span class="mx-2"> Watch Video</span></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 my-3 px-0">
+                <img src="{% static 'landing/iimg/banner.png' %}" class="w-100" alt="">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 bg-light">
+        <div class="container">
+            <div class="row my-3 py-5">
+
+
+                <div class="col-md-6 my-3  ">
+                    <img src="{% static 'landing/iimg/ocation.png' %}" class="w-100" alt="">
+
+                </div>
+
+                <div class="col-md-6 my-3 d-flex align-items-center justify-content-center">
+                    <div>
+                        <h6 class="coor">WHY To INSTALL?</h6>
+                        <h1 class="top-headidng-2 my-3">Don't miss the point<br>again</h1>
+
+                        <p class="text-secondary top-text">App provide the insynced updates of the realtime localion of your shuttle. So you will never miss the point again while standing on the stop. <br>Ins't it exciting?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="w-100 ">
+        <div class="container">
+            <div class="row my-5 py-5">
+                <div class="col-md-6 my-3 d-flex align-items-center">
+                    <div>
+                        <div>
+                            <h6 class="coor">QR payments</h6>
+                            <h1 class="top-headidng-2 my-3">Your point card <br>is 1 only tap away now</h1>
+
+                            <p class="text-secondary top-text">Pay point fees instantly by just scaning the QR code using Point pay app. Use any payment method of your choice to top up the Point pay wallet</p>
+                        </div>
+                        <div class="mt-4">
+                            <h6 class=" d-flex align-items-center mb-3">
+                                <i class="material-icons text-success">done</i>
+                                <span class="mx-2 text-secondary"> Install app</span>
+                            </h6>
+                            <h6 class="d-flex align-items-center mb-3">
+                                <i class="material-icons text-success">done</i>
+                                <span class="mx-2 text-secondary">Open in-app camera</span>
+                            </h6>
+                            <h6 class="d-flex align-items-center mb-3">
+                                <i class="material-icons text-success">done</i>
+                                <span class="mx-2 text-secondary">Top up the wallet</span>
+                            </h6>
+                            <h6 class="d-flex align-items-center">
+                                <i class="material-icons text-success">done</i>
+                                <span class="mx-2 text-secondary">Get the point card</span>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 my-3 ">
+                    <img src="{% static 'landing/iimg/scan.png' %}" class="w-100" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="w-100" id="design">
+
+        <div class="container">
+            <div class="row mx-0 mt-5 py-5" id="bottom-cards">
+                <div class="text-center mb-1">
+                    <h1 class="text-white">Developers</h1>
+                </div>
+               
+            </div>
+
+        </div>
+
+        
+        <div>
+            <img src="{% static 'landing/iimg/developers.png' %}" style="width: 100%" alt="">
+        </div>
+    </div>
+    </div>
+
+
+ 
+
+    <!-- footer start -->
+
+    <div class="mx-0 pt-5 bg-light" id="icon-grid">
+        <div class="container">
+
+            <div class="row" style="margin-bottom: 50px;">
+                <div class="col-sm-6">
+                    
+                    <div class="d-flex">
+                        <img src="{% static 'landing/iimg/dr-asad.jpg' %}" style="border-radius:100px; width:100px; height: 100px" alt="">
+                        <div class="px-3">
+                            <p class="mb-2">Under the supervision of</p>
+
+           
+                            <h3>Dr. Asad Arfeen</h3>
+                            <h6>Associate professor & Director IT, NED UET</h6> 
+                        </div>
+                    </div>
+                  
+                </div>
+
+                <div class="col-sm-6 d-flex justify-content-end">
+                    <h3 class="my-0 d-flex align-items-center">Made with <i class="mx-2 material-icons text-danger">favorite</i> in NCCS LAB</h3>
+
+                </div>
+            </div>
+           
+            
+
+        </div>
+    </div>
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>

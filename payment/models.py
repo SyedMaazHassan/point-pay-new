@@ -7,7 +7,7 @@ from itertools import chain
 import qrcode
 import datetime
 import uuid
-from dashboard.models import Organization, Voucher, UserInfo
+from dashboard.models import Department, Organization, Voucher, UserInfo
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
@@ -77,10 +77,12 @@ class FeeSubmission(VoucherUser):
             user_profile = os.path.join(settings.BASE_DIR, "media", str(self.user.profile_picture))
             organization_logo = cv2.imread(logo)
             organization_abbr = self.voucher.organization.abbr
-            department = 'CIS Department'
+            roll_num = self.user.roll_no
+            dept_part = roll_num.split("-")[0]
+            department = Department.objects.get(organization = self.voucher.organization, abbr = dept_part)            
+            department = department.name
             fee_price = f'{settings.CURRENCY_SYMBOL} {self.voucher.price}'
             user_full_name = f'{self.user.user.first_name} {self.user.user.last_name}'
-            roll_num = 'CS-18180'
             user_profile_pic = cv2.imread(user_profile)
             issue_date = self.get_formatted_date(timezone.now())
             expiry_date = self.get_expiry_date()

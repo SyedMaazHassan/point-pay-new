@@ -94,7 +94,7 @@ WSGI_APPLICATION = "webapp.wsgi.application"
 # Jazzmind setting
 JAZZMIN_SETTINGS = {
     "site_title": "Admin",
-    "site_logo": "logo2.jpeg",
+    "site_logo": "logo2.jpg",
     "copyright": "Point Pay Ltd",
     "site_icon": "logo3.png",
     "site_logo_classes": "img-circle",
