@@ -12,7 +12,7 @@ const firebaseConfig = {
 var point_location;
 firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
-var database_reference = database.ref("NED");
+var database_reference = database.ref("NED UET");
 let point_list = {};
 
 database_reference
